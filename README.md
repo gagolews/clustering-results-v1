@@ -72,11 +72,12 @@ the methods which allow for setting the precise number of generated clusters):
     median, Ward, weighted/McQuitty linkage
 
     * D. Müllner. fastcluster: Fast hierarchical, agglomerative clustering
-    routines for R and Python. *Journal of Statistical Software*, 53(9):1–18,
-    2013. doi:10.18637/jss.v053.i09.
+    routines for R and Python. *Journal of Statistical Software*,
+    53(9):1–18, 2013. doi:10.18637/jss.v053.i09.
 
 
-* `optim_cvi` — argmaxes of many internal cluster validity measures,
+* [`optim_cvi`](https://github.com/gagolews/optim_cvi) — argmaxes of
+    many internal cluster validity measures,
     including the Caliński-Harabasz, Dunn, or silhouette index
 
     * M. Gagolewski, M. Bartoszuk, A. Cena,

@@ -169,4 +169,6 @@ true (reference) label vectors from the
 
 Subdirectory `catalogue_original` contains the graphical representations
 of the identified clusters for quite a few 2- and 3-dimensional data sets
-and methods.
+and methods. The `.md` files can be viewed directly from within GitHub.
+In particular, `catalogue_original/other` also gives the
+[reference labels](https://github.com/gagolews/clustering_benchmarks_v1/blob/master/README.md) (denoted as `labels0`, `labels1`, etc.).

@@ -107,12 +107,12 @@ def process(f, dataset, benchmarks_path, labels_path, output_path):
                 max(ll))
             )
 
-            #_fig_name = "%s.%s.pdf" % (dataset, labels.columns[i])
+            #_fig_name = "%s.result%d.%s.pdf" % (dataset, K, labels.columns[i])
             #_fig_path = os.path.join(output_path, _fig_name)
             #plt.savefig(_fig_path, format="pdf", transparent=True,
                         #bbox_inches="tight")
 
-            _fig_name = "%s.%s.png" % (dataset, labels.columns[i])
+            _fig_name = "%s.result%d.%s.png" % (dataset, K, labels.columns[i])
             _fig_path = os.path.join(output_path, _fig_name)
             plt.savefig(_fig_path, format="png", transparent=True,
                         bbox_inches="tight", dpi=72)

@@ -5,7 +5,7 @@ for the benchmark sets included in:
 
 > M. Gagolewski and others (Eds.),
 [Benchmark Suite for Clustering Algorithms – Version 1](https://github.com/gagolews/clustering_benchmarks_v1),
-2020, doi:10.5281/zenodo.3815066
+2020, [doi:10.5281/zenodo](https://dx.doi.org/10.5281/zenodo).3815066
 
 Refer to the corresponding
 [README](https://github.com/gagolews/clustering_benchmarks_v1/blob/master/README.md)
@@ -35,11 +35,11 @@ the methods which allow for setting the precise number of generated clusters):
     single linkage (Genie_1.0)
 
     * Marek Gagolewski. genieclust: Fast and robust hierarchical
-    clustering. *SoftwareX*, 15:100722, 2021. doi:10.1016/j.softx.2021.100722.
+    clustering. *SoftwareX*, 15:100722, 2021. [doi:10.1016/j.softx.2021.100722](https://dx.doi.org/10.1016/j.softx.2021.100722).
 
     * M. Gagolewski, M. Bartoszuk, and A. Cena. Genie: A new, fast,
     and outlier-resistant hierarchical clustering algorithm.
-    *Information Sciences*, 363:8–23, 2016. doi:10.1016/j.ins.2016.05.003.
+    *Information Sciences*, 363:8–23, 2016. [doi:10.1016/j.ins.2016.05.003](https://dx.doi.org/10.1016/j.ins.2016.05.003).
 
     * A. Cena. *Adaptive hierarchical clustering algorithms based
     on data aggregation methods*, Ph.D. thesis, Systems Research Institute,
@@ -73,7 +73,7 @@ the methods which allow for setting the precise number of generated clusters):
 
     * D. Müllner. fastcluster: Fast hierarchical, agglomerative clustering
     routines for R and Python. *Journal of Statistical Software*,
-    53(9):1–18, 2013. doi:10.18637/jss.v053.i09.
+    53(9):1–18, 2013. [doi:10.18637/jss.v053.i09](https://dx.doi.org/10.18637/jss.v053.i09).
 
 
 * [`optim_cvi`](https://github.com/gagolews/optim_cvi) — argmaxes of
@@ -82,7 +82,8 @@ the methods which allow for setting the precise number of generated clusters):
 
     * M. Gagolewski, M. Bartoszuk, A. Cena,
     Are cluster validity measures (in)valid?,
-    2021, *under review*.
+    *Information Sciences*, 581:620–636, 2021.
+    [doi:10.1016/j.ins.2021.10.004](https://dx.doi.org/10.1016/j.ins.2021.10.004).
 
 If you wish other results be included in this repository,
 do not hesitate to contact the [maintainer](https://www.gagolewski.com)

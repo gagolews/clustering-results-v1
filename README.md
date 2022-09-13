@@ -6,8 +6,7 @@ This repository is part of the
 
 It hosts the outputs of various clustering algorithms for the datasets included
 in the *Benchmark Suite for Clustering Algorithms: Version 1.1.0*, 2022,
-<https://github.com/gagolews/clustering-data-v1/releases/tag/v1.1.0>,
-DOI: 10.5281/zenodo.xxxxxxx.
+<https://github.com/gagolews/clustering-data-v1/>.
 
 **Author/Editor/Maintainer**:
 [Marek Gagolewski](https://www.gagolewski.com).

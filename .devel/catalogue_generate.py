@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-"""Generates the Catalogue of Clustering Datasets in a Given Directory
+"""Generates the Catalogue of Clustering Results
 
-Copyleft (C) 2018-2021, Marek Gagolewski <https://www.gagolewski.com>
+Copyleft (C) 2018-2022, Marek Gagolewski <https://www.gagolewski.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,54 +29,102 @@ import re
 import sys
 import genieclust
 from natsort import natsorted
-
+import shutil
+import clustbench
 
 #################################################################################
 # Global options
 
-plt.style.use('seaborn-whitegrid')
-
 # Sorry for this being hardcoded!
-# See https://github.com/gagolews/clustering_benchmarks_v1/
-benchmarks_path = "/home/gagolews/Projects/clustering_benchmarks_v1"
+# See https://github.com/gagolews/clustering-data-v1/
+data_path = os.path.expanduser("~/Projects/clustering-data-v1")
+# See https://github.com/gagolews/clustering-results-v1/
+results_path = os.path.expanduser("~/Projects/clustering-results-v1/original")
+
+ignore_methods_regex = r"^DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*|^WCNN.*"
+include_methods = ["sklearn_birch_T0.01_BF50", "sklearn_spectral_Alaplacian_G5"]
+
+plt.style.use("seaborn")  # overall plot style
+
+_colours = [  # the "R4" palette
+    "#000000", "#DF536B", "#61D04F", "#2297E6",
+    "#28E2E5", "#CD0BBC", "#F5C710", "#999999"
+]
+
+_linestyles = [
+    "solid", "dashed", "dashdot", "dotted"
+]
+
+plt.rcParams["axes.prop_cycle"] = plt.cycler(
+    # each plotted line will have a different plotting style
+    color=_colours, linestyle=_linestyles*2
+)
+plt.rcParams["patch.facecolor"] = _colours[0]
+
+np.random.seed(123)  # initialise the pseudorandom number generator
+
+plt.rcParams.update({  # further graphical parameters
+    "font.size":         13,
+    "font.family":       "sans-serif",
+    "font.sans-serif":   ["Alegreya Sans", "Alegreya"],
+    "figure.autolayout": True,
+    "figure.dpi":        96,
+    "figure.figsize":    (3.5, 3.5),
+})
+
 
 #################################################################################
 
 
-def process(f, dataset, benchmarks_path, labels_path, output_path):
-    """
-    Processes a single dataset (yup!).
-    """
-    X = np.loadtxt(os.path.join(benchmarks_path, dataset+".data.gz"), ndmin=2)
-    # X = (X-X.mean(axis=0))/X.std(axis=None, ddof=1) # scale all axes proportionally
 
-    print('# %s (n=%d, d=%d) <a name="%s"></a>\n' % (
-        dataset, X.shape[0], X.shape[1], str.replace(dataset, os.path.sep, "_")
+# TODO: rewrite using clustbench.load_dataset etc.
+
+def process(f, battery, dataset):
+    """
+    Processes a single dataset
+    """
+    b = clustbench.load_dataset(battery, dataset, path=data_path, preprocess=False)
+    X = b.data
+
+    print('## %s/%s (n=%d, d=%d) <a name="%s"></a>\n' % (
+        battery, dataset, X.shape[0], X.shape[1], dataset
     ), file=f)
 
-    fnames = glob.glob(os.path.join(labels_path, dataset) + ".result*.gz")
-    Ks = np.unique([int(re.search(r"\.result([0-9]+)\.gz$", fname).group(1))
-        for fname in fnames])
+    labels = b.labels
+    label_names = [("labels%d" % i) for i in range(len(labels))]
+    true_K = [max(ll) for ll in labels]
+    all_K = np.unique(true_K)
 
-    #print(fnames)
+    if X.shape[1] not in [1, 2, 3]:
+        print('> **(preview generation suppressed)**\n\n', file=f)
 
-    for K in Ks:
-        fname = os.path.join(labels_path, dataset) + ".result%d.gz" % K
-        labels = pd.read_csv(fname)
+    res = []
+    results = clustbench.load_results("*", battery, dataset, all_K, results_path)
 
-        for i in range(labels.shape[1]):
-            ll = np.array(labels.iloc[:, i])
-            #print("#### `%s`\n\nk=%2d, g=%.3f\n\nlabel_counts=%r\n" % (
-                    #labels.columns[i],
-                    #max(ll),
-                    #genieclust.inequity.gini_index(ll),
-                    #np.bincount(ll).tolist()
-                #),
-                #file=f
-            #)
+    scores = dict()
+    for method in results.keys():
+        scores[method] = clustbench.get_score(labels, results[method])
+    scores = pd.Series(scores).sort_values(ascending=False)
+
+    for method in scores.index:
+        if (re.search(ignore_methods_regex, method) is not None) and (method not in include_methods):
+            continue
+
+        print('#### %s (AAA=%.2f)\n' % (method, scores[method]), file=f)
+
+        for k in all_K:
+            if k not in results[method]:
+                continue
+
+            res.append(dict(
+                battery=battery,
+                dataset=dataset,
+                k=k,
+                method=method
+            ))
 
             if X.shape[1] not in [1, 2, 3]:
-                print('> **(preview generation suppressed)**\n\n', file=f)
+                #print('> **(preview generation suppressed)**\n\n', file=f)
                 continue
 
             plt.figure()
@@ -84,51 +132,49 @@ def process(f, dataset, benchmarks_path, labels_path, output_path):
 
 
             if X.shape[1] == 2:
-                genieclust.plots.plot_scatter(X, labels=ll, alpha=0.5)
+                genieclust.plots.plot_scatter(X, labels=results[method][k]-1, alpha=0.5)
                 plt.axis("equal")
 
             elif X.shape[1] == 1:
                 X_aug = np.insert(X, 1, np.random.randn(len(X))*(X.max()-X.min())*1e-6, axis=1)
-                genieclust.plots.plot_scatter(X_aug, labels=ll, alpha=0.5)
+                genieclust.plots.plot_scatter(X_aug, labels=results[method][k]-1, alpha=0.5)
                 plt.axis("equal")
 
             elif X.shape[1] == 3:
-                ax.scatter(X[:, 0], X[:, 1],
-                        c=np.array(genieclust.plots.col, dtype=object)[
-                            (ll) % len(genieclust.plots.col)
-                        ],
-                        alpha=0.5)
+                ax.scatter(
+                    X[:, 0],
+                    X[:, 1],
+                    c=np.array(genieclust.plots.col, dtype=object)[
+                        (results[method][k]-1) % len(genieclust.plots.col)
+                    ],
+                    alpha=0.5
+                )
                 #plt.axis("equal")
 
-            plt.title("%s.%s (n=%d, k=%d)" % (
+            plt.title("%s/%s (n=%d, k=%d)\n%s" % (
+                battery,
                 dataset,
-                labels.columns[i],
                 X.shape[0],
-                max(ll))
+                k,
+                method
+            ))
+
+            _fig_name = os.path.join(battery, "%s.result%d.%s.png" % (dataset, k, method))
+            _fig_path = os.path.join(".catalogue", "original", _fig_name)
+            plt.savefig(_fig_path, format='png',
+                        #transparent=True,
+                        bbox_inches='tight',
+                        #dpi=150
             )
-
-            #_fig_name = "%s.result%d.%s.pdf" % (dataset, K, labels.columns[i])
-            #_fig_path = os.path.join(output_path, _fig_name)
-            #plt.savefig(_fig_path, format="pdf", transparent=True,
-                        #bbox_inches="tight")
-
-            _fig_name = "%s.result%d.%s.png" % (dataset, K, labels.columns[i])
-            _fig_path = os.path.join(output_path, _fig_name)
-            plt.savefig(_fig_path, format="png", transparent=True,
-                        bbox_inches="tight", dpi=72)
-
             plt.close()
 
             print("![](%s)" % (_fig_name), file=f)
 
-            # with open(_fig_path, "rb") as img:
-                # encoded_string = base64.b64encode(img.read()).decode("US-ASCII")
-            #print("<img src='data:image/png;base64,"+encoded_string+"' alt='%s.%s' />\n"%(dataset, label_names[i]), file=f)
+        # end for each k
+        print("\n\n", file=f)
+    # end for each method
 
-
-
-
-    print("\n\n", file=f)
+    return res
 
 
 ###############################################################################
@@ -136,46 +182,50 @@ def process(f, dataset, benchmarks_path, labels_path, output_path):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 4:
-        sys.exit("Usage: %s benchmark_folder labels_path output_path" % sys.argv[0])
+    if len(sys.argv) != 2:
+        sys.exit("Usage: %s benchmark_folder" % sys.argv[0])
 
-    folder = sys.argv[1]
-    if not os.path.isdir(os.path.join(benchmarks_path, folder)):
-        raise Exception("`%s` is not a directory" % folder)
+    battery = sys.argv[1]
 
-    labels_path = sys.argv[2]
-    if not os.path.isdir(labels_path):
-        raise Exception("`%s` is not a directory" % labels_path)
+    #fnames = glob.glob("*.data.gz", root_dir=battery)
+    datasets = clustbench.get_dataset_names(battery, data_path)
 
-    fnames = glob.glob(os.path.join(benchmarks_path, folder, "*.data.gz"))
-    datasets = natsorted(
-        [re.search("%s[/\\\\]?(.*)\\.data\\.gz" % benchmarks_path, name)[1] for name in fnames])
-
-    output_path = sys.argv[3]
-    if not os.path.isdir(output_path): os.mkdir(output_path)
-
-    image_folder = os.path.join(output_path, folder)
+    image_folder = os.path.join(".catalogue", "original", battery)
     if not os.path.isdir(image_folder): os.mkdir(image_folder)
 
-    output = os.path.join(output_path, "%s.md" % folder)
+    output = os.path.join(".catalogue", "original", "%s.md" % battery)
     f = open(output, "w")
 
+    print("The **[Framework for Benchmarking Clustering Algorithms](https://clustering-benchmarks.gagolewski.com)", file=f)
+    print("is authored/edited/maintained by [Marek Gagolewski](https://www.gagolewski.com)**\n", file=f)
 
-    print("""\
-# [Benchmark Suite for Clustering Algorithms - Version 1](https://github.com/gagolews/clustering_benchmarks_v1/) by [Marek Gagolewski](https://www.gagolewski.com) and others
+    with np.DataSource().open(os.path.join(data_path, "VERSION")) as vf:
+        version = vf.read()
 
-## Results
+    print("\n[Benchmark suite](https://github.com/gagolews/clustering-data-v1) version %s\n" % version, file=f)
 
-""", file=f)
+    print("\n"+("-"*80)+"\n", file=f)
 
     print("**Datasets**\n", file=f)
     for dataset in datasets:
-        print("* [%s](#%s)" % (dataset, str.replace(dataset, "/", "_")), file=f)
+        print("* [%s/%s](#%s)" % (
+            battery, dataset, dataset
+        ), file=f)
+
+    print('\n\n*(results are sorted wrt the adjusted asymmetric accuracy score – comparison against the reference labels; see the Framework\'s [homepage](https://clustering-benchmarks.gagolewski.com) for more details)*\n\n', file=f)
+
     print("\n"+("-"*80)+"\n", file=f)
 
+    metadata = []
     for dataset in datasets:
-        print("Generating %s..." % dataset)
-        process(f, dataset, benchmarks_path, labels_path, output_path)
+        print("Generating %s/%s... " % (battery, dataset), end="")
+        metadata += process(f, battery, dataset)
+        print("")
     f.close()
+
+    metadata_file = os.path.join(".catalogue", "original", "%s.csv" % battery)
+    pd.DataFrame(metadata).\
+        loc[:, ["battery", "dataset", "k", "method"]].\
+        to_csv(metadata_file, header=True, index=False)
 
     print("Done.")

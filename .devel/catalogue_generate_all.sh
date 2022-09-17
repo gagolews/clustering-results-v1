@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Copyleft (C) 2018-2021, Marek Gagolewski <https://www.gagolewski.com>
-# runs ./catalogue_generate.py on a number of test batteries
+# Copyleft (C) 2018-2022, Marek Gagolewski <https://www.gagolewski.com>
 
-batteries="fcps graves other sipu uci wut" # mnist h2mg g2mg
-labels_path="results_original/other"
-output_path="catalogue_original/other"
+# please run from within the repo's root folder
+
+batteries="fcps graves other sipu wut" # uci mnist h2mg g2mg"
 for b in $batteries; do
-    ./catalogue_generate.py $b $labels_path $output_path
-    pandoc $output_path/$b.md --to html -o $output_path/$b.html
+    ./.devel/catalogue_generate.py $b
+    #pandoc .catalogue/$b.md --to html -o .catalogue/$b.html
 done

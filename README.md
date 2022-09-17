@@ -25,5 +25,5 @@ The datasets are provided solely for research purposes.
 > only the results for smaller datasets and a few cardinalities
 > are provided.
 
-> The `original` directory gives the results on the *original* data spaces,
+> The directory named `original` gives the results on the *original* data spaces,
 > i.e., where only some minor preprocessing was applied.

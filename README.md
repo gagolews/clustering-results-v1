@@ -29,4 +29,5 @@ The datasets are provided solely for research purposes.
 > of clusters than requested, the respective output is not provided.
 
 > The directory named `original` gives the results on the *original*
-> data spaces, i.e., where only some minor preprocessing was applied.
+> data spaces, i.e., where only some minor preprocessing was applied;
+> see the `README` file therein for more details.

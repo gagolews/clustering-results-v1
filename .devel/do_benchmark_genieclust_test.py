@@ -1,5 +1,5 @@
 """
-Copyright (C) 2020, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@ import numpy as np
 
 def do_benchmark_genie(X, Ks):
     max_K = max(Ks)
-    max_K = max(max_K, 16) # just in case we'll need more in the future
+    max_K = max(max_K, 16)  # just in case we'll need more in the future
     Ks = np.unique(np.array(list(range(2, max_K+1))+list(Ks)))
     res = dict()
     for K in Ks: res[K] = dict()
@@ -41,11 +41,11 @@ def do_benchmark_genie(X, Ks):
 
     print(" >:", end="", flush=True)
     for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
-        method = "Genie_G%.1f"%g
+        method = "Genie_G%.1f" % g
         for K in Ks:
             genie.set_params(gini_threshold=g)
             genie.set_params(n_clusters=K)
-            labels_pred = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+            labels_pred = genie.fit_predict(X) + 1 # 0-based -> 1-based!!!
             res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":<", end="", flush=True)
@@ -109,7 +109,7 @@ def do_benchmark_ica(X, Ks):
 
 from estimate_dimension import *
 
-def do_benchmark_gictest(X, Ks):
+def do_benchmark_test_gic(X, Ks):
     max_K = max(Ks)
     #max_K = max(max_K, 16) # just in case we'll need more in the future
     #Ks = [0]+list(range(2, max_K+1))
@@ -121,49 +121,53 @@ def do_benchmark_gictest(X, Ks):
     gic = genieclust.GIc(postprocess="all")
 
     print(" >:", end="", flush=True)
-    di = estimate_dimension(X)
+    #di = estimate_dimension(X)
     print(":", end="", flush=True)
 
-    for d in ["d", "i", "r"]:
-        if   d == "d": n_features = None
-        elif d == "i": n_features = di
-        else:          n_features = np.round(di)
+    # NOTE: n_features = None turns out to be slightly better than "i" and "r"
+    #for d in ["d"]:  # ["d", "i", "r"]:
+        #if   d == "d": n_features = None
+        #elif d == "i": n_features = di
+        #else:          n_features = np.round(di)
 
-        for add in [10, 5, 1, 0]:
-            for g in [np.r_[0.1, 0.3, 0.5, 0.7], np.linspace(0.0, 1.0, 11)]:
-                for K in Ks:
-                    method = "GIcTest_A%d_T%d_D%s"%(add,len(g), d)
-                    gic.set_params(n_clusters=K,
-                            compute_full_tree=False,
-                            compute_all_cuts=False,
-                            n_features=n_features,
-                            gini_thresholds=g,
-                            add_clusters=add)
-                    labels_pred = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
-                    res[K][method] = labels_pred
-            print(".", end="", flush=True)
-        print(":", end="", flush=True)
+    n_features = None
 
-        gic.set_params(
-            n_clusters=max_K,
-            compute_full_tree=True,
-            compute_all_cuts=True,
-            gini_thresholds=[] # this is IcA -- start from n singletons
-        )
-        method = "GIcTest_IcA_D%s"%d
-        labels_pred_matrix = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
-        for K in Ks:
-            res[K][method] = labels_pred_matrix[K]
-        print(":", end="", flush=True)
+    for add in [10, 5, 1, 0]:
+        for g in [np.r_[0.1, 0.3, 0.5, 0.7], np.linspace(0.0, 1.0, 11)]:
+            for K in Ks:
+                #method = "Test_GIc_A%d_T%d_D%s"%(add, len(g), d)
+                method = "Test_GIc_Addcl%d_Thresnum%d"%(add, len(g))
+                gic.set_params(n_clusters=K,
+                        compute_full_tree=False,
+                        compute_all_cuts=False,
+                        n_features=n_features,
+                        gini_thresholds=g,
+                        add_clusters=add)
+                labels_pred = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
+                res[K][method] = labels_pred
+        print(".", end="", flush=True)
+    print(":", end="", flush=True)
+
+    # gic.set_params(
+    #     n_clusters=max_K,
+    #     compute_full_tree=True,
+    #     compute_all_cuts=True,
+    #     gini_thresholds=[]  # this is IcA -- start from n singletons
+    # )
+    # method = "Test_IcA_D%s"%d
+    # labels_pred_matrix = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
+    # for K in Ks:
+    #     res[K][method] = labels_pred_matrix[K]
+    # print(":", end="", flush=True)
 
     print("<", end="", flush=True)
     return res
 
 
 
-def do_benchmark_genienewtest(X, Ks):
+def do_benchmark_test_genie_forced_merge(X, Ks):
     max_K = max(Ks)
-    max_K = max(max_K, 16) # just in case we'll need more in the future
+    max_K = max(max_K, 16)  # just in case we'll need more in the future
     Ks = np.unique(np.array(list(range(2, max_K+1))+list(Ks)))
     res = dict()
     for K in Ks: res[K] = dict()
@@ -172,11 +176,11 @@ def do_benchmark_genienewtest(X, Ks):
         postprocess="all"
     )
 
-    genie._new_merge = True
+    genie._experimental_forced_merge = True
 
     print(" >:", end="", flush=True)
     for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
-        method = "GenieNewTest_G%.1f"%g
+        method = "Test_Genie_ForcedMerge_G%.1f"%g
         for K in Ks:
             genie.set_params(gini_threshold=g)
             genie.set_params(n_clusters=K)

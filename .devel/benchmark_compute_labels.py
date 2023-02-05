@@ -9,7 +9,7 @@ Apply a registered (see below for details) clustering METHOD on
 each benchmark dataset from the repository (see below) and
 store the obtained partitions in the current working directory.
 
-Copyright (C) 2020, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,31 @@ SOFTWARE.
 """
 
 
+#import sys
+import numpy as np
+import pandas as pd
+#import scipy.stats
+import os.path
+import glob
+import re
+import csv
+import os
+from natsort import natsorted
+import sklearn.metrics
+import time
+from benchmark_load import *
+
+
+
+
+
 # ``````````````````````````````````````````````````````````````````````````````
 # `````` USER SETTINGS                                                   ```````
 # ``````````````````````````````````````````````````````````````````````````````
 
 # TODO: download the clustering benchmarks repository from
 # https://github.com/gagolews/clustering_benchmarks_v1
-benchmarks_path = "/home/gagolews/Projects/clustering_benchmarks_v1"
+benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
 
 
 # TODO: select one or more processing methods  (must be a list)
@@ -45,7 +63,7 @@ preprocessors = ["original", "scale_standard", "scale_robust"][:1]
 
 # TODO: if your algorithm is too slow for processing of large datasets,
 # well, set the following to True (will skip datasets with > 10000 rows)
-small_only = False
+small_only = True
 
 # TODO: select one or more test batteries (must be a list)
 batteries = ["wut", "graves", "uci", "other", "fcps",
@@ -56,9 +74,9 @@ batteries = ["wut", "graves", "uci", "other", "fcps",
 method = [
     "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
     "GIc",     # GIc - default parameters
-    "GIcTest", # GIc - many parameters (for testing)
+    "Test_GIc", # GIc - many parameters (for testing)
+    "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
     #"GenieApprox",
-    #"GenieNewTest",
     "IcA",     # IcA (via GIc)
     "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
     "fastcluster_median",
@@ -76,8 +94,8 @@ method = [
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
 #                 -- marks some points as noise in the output
-# hdbscan.RobustSingleLinkage -- the same as above
-# sklearn.cluster.OPTICS -- the same as above
+# hdbscan.RobustSingleLinkage -- the same problem
+# sklearn.cluster.OPTICS -- the same problem
 # sklearn.cluster.AffinityPropagation -- no n_clusters
 # sklearn.cluster.MeanShift -- no n_clusters
 # sklearn.cluster.DBSCAN -- no n_clusters
@@ -90,17 +108,17 @@ if method == "Genie":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_genie
 elif method == "GenieApprox":
-    import do_benchmark_genieclust
-    do_benchmark = do_benchmark_genieclust.do_benchmark_genieapprox
-elif method == "GenieNewTest":
-    import do_benchmark_genieclust
-    do_benchmark = do_benchmark_genieclust.do_benchmark_genienewtest
+    import do_benchmark_genieclust_test
+    do_benchmark = do_benchmark_genieclust_test.do_benchmark_genieapprox
+elif method == "Test_Genie_ForcedMerge":
+    import do_benchmark_genieclust_test
+    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_genie_forced_merge
 elif method == "GIc":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_gic
-elif method == "GIcTest":
-    import do_benchmark_genieclust
-    do_benchmark = do_benchmark_genieclust.do_benchmark_gictest
+elif method == "Test_GIc":
+    import do_benchmark_genieclust_test
+    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_gic
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica
@@ -180,24 +198,6 @@ obtained; the CSV file will have columns named
 parameter combinations applied (each column gives a separate vector
 of predicted labels).
 """
-
-
-
-
-# ``````````````````````````````````````````````````````````````````````````````
-# ``````````````````````````````````````````````````````````````````````````````
-# ``````````````````````````````````````````````````````````````````````````````
-
-
-import sys
-import numpy as np
-import pandas as pd
-import scipy.stats
-import os.path, glob, re, csv, os
-from natsort import natsorted
-import sklearn.metrics
-import time
-from benchmark_load import *
 
 
 

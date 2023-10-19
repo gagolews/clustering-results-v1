@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-# Copyleft 2020-2021, Marek Gagolewski <https://www.gagolewski.com>
+# Copyleft 2020-2023, Marek Gagolewski <https://www.gagolewski.com>
 
 # combines outputs of many clustering algorithms
 # scattered around many sub_paths into one folder output_path

@@ -110,7 +110,7 @@ def process(f, battery, dataset):
         if (re.search(ignore_methods_regex, method) is not None) and (method not in include_methods):
             continue
 
-        print('#### %s (AAA=%.2f)\n' % (method, scores[method]), file=f)
+        print('#### %s (NCA=%.2f)\n' % (method, scores[method]), file=f)
 
         for k in all_K:
             if k not in results[method]:
@@ -212,7 +212,7 @@ if __name__ == "__main__":
             battery, dataset, dataset
         ), file=f)
 
-    print('\n\n*(results are sorted wrt the adjusted asymmetric accuracy score – comparison against the reference labels; see the Framework\'s [homepage](https://clustering-benchmarks.gagolewski.com) for more details)*\n\n', file=f)
+    print('\n\n*(results are sorted wrt the normalised clustering accuracy score – comparison against the reference labels; see the Framework\'s [homepage](https://clustering-benchmarks.gagolewski.com) for more details)*\n\n', file=f)
 
     print("\n"+("-"*80)+"\n", file=f)
 

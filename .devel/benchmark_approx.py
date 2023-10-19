@@ -9,7 +9,7 @@ Apply a registered (see below for details) clustering METHOD on
 selected benchmark datasets from the repository and measure time
 and memory consumption.
 
-Copyright (C) 2020, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

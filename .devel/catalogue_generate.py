@@ -32,6 +32,8 @@ from natsort import natsorted
 import shutil
 import clustbench
 
+# TODO: git-filter-repo --path .catalogue/original --invert-paths --force
+
 #################################################################################
 # Global options
 
@@ -42,7 +44,7 @@ data_path = os.path.expanduser("~/Projects/clustering-data-v1")
 results_path = os.path.expanduser("~/Projects/clustering-results-v1/original")
 
 ignore_methods_regex = r".*DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*" + \
-    ".*WCNN.*|^Test_.*|^mst_.*"
+    "|.*WCNN.*|^Test_.*|^mst_.*"
 
 include_methods = [
     "sklearn_birch_T0.01_BF50",
@@ -51,6 +53,7 @@ include_methods = [
     "DuNN_25_Mean_Mean",
     "DuNN_25_Max_Min",
     "WCNN_25",
+    "mst_divisive_BallHall","mst_divisive_CalinskiHarabasz","mst_divisive_DaviesBouldin","mst_divisive_Silhouette","mst_divisive_SilhouetteW","mst_divisive_GDunn_d1_D1","mst_divisive_GDunn_d1_D2","mst_divisive_GDunn_d1_D3","mst_divisive_GDunn_d2_D1","mst_divisive_GDunn_d2_D2","mst_divisive_GDunn_d2_D3","mst_divisive_GDunn_d3_D1","mst_divisive_GDunn_d3_D2","mst_divisive_GDunn_d3_D3","mst_divisive_GDunn_d4_D1","mst_divisive_GDunn_d4_D2","mst_divisive_GDunn_d4_D3","mst_divisive_GDunn_d5_D1","mst_divisive_GDunn_d5_D2","mst_divisive_GDunn_d5_D3",
     "mst_divisive_DuNN_25_Min_Max",
     "mst_divisive_DuNN_25_Mean_Mean",
     "mst_divisive_DuNN_25_Max_Min",

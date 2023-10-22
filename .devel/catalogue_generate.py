@@ -41,8 +41,21 @@ data_path = os.path.expanduser("~/Projects/clustering-data-v1")
 # See https://github.com/gagolews/clustering-results-v1/
 results_path = os.path.expanduser("~/Projects/clustering-results-v1/original")
 
-ignore_methods_regex = r"^DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*|^WCNN.*"
-include_methods = ["sklearn_birch_T0.01_BF50", "sklearn_spectral_Alaplacian_G5"]
+ignore_methods_regex = r".*DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*" + \
+    ".*WCNN.*|^Test_.*|^mst_.*"
+
+include_methods = [
+    "sklearn_birch_T0.01_BF50",
+    "sklearn_spectral_Alaplacian_G5",
+    "DuNN_25_Min_Max",
+    "DuNN_25_Mean_Mean",
+    "DuNN_25_Max_Min",
+    "WCNN_25",
+    "mst_divisive_DuNN_25_Min_Max",
+    "mst_divisive_DuNN_25_Mean_Mean",
+    "mst_divisive_DuNN_25_Max_Min",
+    "mst_divisive_WCNN_25",
+]
 
 plt.style.use("seaborn-v0_8-whitegrid")  # overall plot style
 
@@ -159,9 +172,9 @@ def process(f, battery, dataset):
                 method
             ))
 
-            _fig_name = os.path.join(battery, "%s.result%d.%s.png" % (dataset, k, method))
+            _fig_name = os.path.join(battery, "%s.result%d.%s.jpg" % (dataset, k, method))
             _fig_path = os.path.join(".catalogue", "original", _fig_name)
-            plt.savefig(_fig_path, format='png',
+            plt.savefig(_fig_path, format='jpg',
                         #transparent=True,
                         bbox_inches='tight',
                         #dpi=150

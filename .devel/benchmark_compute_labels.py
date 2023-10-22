@@ -66,8 +66,8 @@ preprocessors = ["original", "scale_standard", "scale_robust"][:1]
 small_only = True
 
 # TODO: select one or more test batteries (must be a list)
-batteries = ["wut", "graves", "uci", "other", "fcps",
-             "sipu", "mnist", "h2mg", "g2mg"]
+batteries = ["wut", "graves", "other", "fcps", "sipu", "uci",
+             "mnist", "h2mg", "g2mg"][:6]
 
 
 # TODO: register new METHOD here, then select it
@@ -89,7 +89,8 @@ method = [
     "sklearn_birch",
     "sklearn_gm",
     "sklearn_spectral",
-][3]
+    "fcps_nonproj",
+][-1]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -155,6 +156,9 @@ elif method == "fastcluster_ward":
 elif method == "fastcluster_centroid":
     import do_benchmark_fastcluster
     do_benchmark = do_benchmark_fastcluster.do_benchmark_centroid
+elif method == "fcps_nonproj":
+    import do_benchmark_fcps
+    do_benchmark = do_benchmark_fcps.do_benchmark_fcps_nonproj
 else:
     raise Exception("unknown `method`")
 
@@ -282,7 +286,7 @@ def benchmark(battery, dataset, benchmarks_path,
     Ks = np.unique([len(np.bincount(l)[1:]) for l in labels])[::-1]
     # Ks is sorted decreasingly
 
-    output_path = os.path.join("results_"+preprocess, method, battery)
+    output_path = os.path.join(preprocess, method, battery)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     output_fname_base = os.path.join(output_path, dataset)

@@ -10,6 +10,8 @@ We selected all algorithms which return an a priori-given number of clusters,
 and do not rely on heavy feature engineering/fancy data projections,
 as such methods should be evaluated separately.
 
+Note that HDBSCAN might mark certain points as noise (cluster ID of 0).
+
 We did not include the algorithms that are available in other packages and
 are already part of this results repository,
 e.g., fastcluster, genieclust, and scikit-learn.

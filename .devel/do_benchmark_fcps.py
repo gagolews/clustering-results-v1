@@ -47,10 +47,6 @@ def do_benchmark_fcps_nonproj(X, Ks):
         byrow=True, nrow=X.shape[0]
     )
 
-    #r_base.print(rF)
-    #r_base.print(rX)
-    #r_base.print(K)
-
     print(" >:", end="", flush=True)
     for K in Ks:
         rres = rF(data=rX, k=K, verbose=True)

@@ -94,7 +94,7 @@ fcps_nonproj_apply <- function(data, k, verbose=FALSE)
             y_pred <- as.integer(do.call(fun, args)[["Cls"]])
 
             .t <- tabulate(y_pred)
-            stopifnot(length(.t) == k, .t > 0)
+            stopifnot(y_pred > 0, length(.t) == k, .t > 0)
 
             res[[names(cases)[i]]] <- as.integer(y_pred)
             if (verbose) cat(".")

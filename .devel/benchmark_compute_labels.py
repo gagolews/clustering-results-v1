@@ -9,7 +9,7 @@ Apply a registered (see below for details) clustering METHOD on
 each benchmark dataset from the repository (see below) and
 store the obtained partitions in the current working directory.
 
-Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2024, Marek Gagolewski, https://www.gagolewski.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
 
 
 # TODO: select one or more processing methods  (must be a list)
-preprocessors = ["original", "scale_standard", "scale_robust"][:1]
+preprocessors = ["original", "scale_standard", "scale_robust"][1:2]
 
 # TODO: if your algorithm is too slow for processing of large datasets,
 # well, set the following to True (will skip datasets with > 10000 rows)
@@ -67,7 +67,7 @@ small_only = True
 
 # TODO: select one or more test batteries (must be a list)
 batteries = ["wut", "graves", "other", "fcps", "sipu", "uci",
-             "mnist", "h2mg", "g2mg"][:6]
+             "mnist", "h2mg", "g2mg"][:5]
 
 
 # TODO: register new METHOD here, then select it
@@ -76,7 +76,7 @@ method = [
     "GIc",     # GIc - default parameters
     "Test_GIc", # GIc - many parameters (for testing)
     "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
-    #"GenieApprox",
+    "GenieApprox",
     "IcA",     # IcA (via GIc)
     "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
     "fastcluster_median",
@@ -90,7 +90,7 @@ method = [
     "sklearn_gm",
     "sklearn_spectral",
     "fcps_nonproj",
-][-1]
+][6]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -272,7 +272,7 @@ def benchmark(battery, dataset, benchmarks_path,
     X = load_data(input_fname_base+".data.gz", preprocess)
 
 
-    if small_only and X.shape[0] > 10_000:
+    if small_only and X.shape[0] >= 10_000:
         return
 
 

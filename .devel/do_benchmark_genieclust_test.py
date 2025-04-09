@@ -249,31 +249,30 @@ def do_benchmark_genieapprox(X, Ks):
 
 
 
-#def do_benchmark_geniem(X, Ks):
-    #max_K = max(max(Ks), 16) # just in case we'll need more in the future
-    #Ks = [0]+list(range(2, max_K+1))
-    #res = dict()
-    #for K in Ks: res[K] = dict()
+def do_benchmark_test_geniem(X, Ks):
+    max_K = max(max(Ks), 16) # just in case we'll need more in the future
+    Ks = [0]+list(range(2, max_K+1))
+    res = dict()
+    for K in Ks: res[K] = dict()
 
-    #genie = genieclust.Genie(
-        #n_clusters=max_K,
-        #compute_full_tree=True,
-        #postprocess="all",
-        #compute_all_cuts=True
-    #)
+    genie = genieclust.Genie(
+        n_clusters=max_K,
+        compute_full_tree=True,
+        postprocess="all",
+        compute_all_cuts=True
+    )
 
-
-    #print(" >:", end="", flush=True)
-    #for M in sorted([1, 3, 5, 9, 15, 25])[::-1]: # decreasing M => NNs are reused
-        #for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
-            #method = "Genie_G%.1f_M%d"%(g,M)
-            #genie.set_params(gini_threshold=g, M=M)
-            #labels_pred_matrix = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
-            ## note some K-partitions might be unavailable (too many noise points):
-            #for K in range(labels_pred_matrix.shape[0]):
-                #if K == 1: continue # ignore
-                #res[K][method] = labels_pred_matrix[K]
-            #print(".", end="", flush=True)
-        #print(":", end="", flush=True)
-    #print("<", end="", flush=True)
-    #return res
+    print(" >:", end="", flush=True)
+    for M in sorted([1, 3, 5, 7, 10])[::-1]:  # decreasing M => NNs are reused
+        for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
+            method = "Genie_G%.1f_M%d"%(g,M)
+            genie.set_params(gini_threshold=g, M=M)
+            labels_pred_matrix = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+            # note some K-partitions might be unavailable (too many noise points):
+            for K in range(labels_pred_matrix.shape[0]):
+                if K == 1: continue # ignore
+                res[K][method] = labels_pred_matrix[K]
+            print(".", end="", flush=True)
+        print(":", end="", flush=True)
+    print("<", end="", flush=True)
+    return res

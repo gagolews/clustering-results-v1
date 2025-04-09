@@ -9,7 +9,7 @@ Apply a registered (see below for details) clustering METHOD on
 each benchmark dataset from the repository (see below) and
 store the obtained partitions in the current working directory.
 
-Copyright (C) 2020-2024, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2025, Marek Gagolewski, https://www.gagolewski.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
 
 
 # TODO: select one or more processing methods  (must be a list)
-preprocessors = ["original", "scale_standard", "scale_robust"][1:2]
+preprocessors = ["original", "scale_standard", "scale_robust"][:1]
 
 # TODO: if your algorithm is too slow for processing of large datasets,
 # well, set the following to True (will skip datasets with > 10000 rows)
@@ -67,7 +67,7 @@ small_only = True
 
 # TODO: select one or more test batteries (must be a list)
 batteries = ["wut", "graves", "other", "fcps", "sipu", "uci",
-             "mnist", "h2mg", "g2mg"][:5]
+             "mnist", "h2mg", "g2mg"][:6]
 
 
 # TODO: register new METHOD here, then select it
@@ -76,6 +76,9 @@ method = [
     "GIc",     # GIc - default parameters
     "Test_GIc", # GIc - many parameters (for testing)
     "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
+    "Test_RobustSingleLinkage",
+    "Test_Lumbermark",
+    "Test_GenieM",
     "GenieApprox",
     "IcA",     # IcA (via GIc)
     "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
@@ -120,6 +123,15 @@ elif method == "GIc":
 elif method == "Test_GIc":
     import do_benchmark_genieclust_test
     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_gic
+elif method == "Test_GenieM":
+    import do_benchmark_genieclust_test
+    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
+elif method == "Test_RobustSingleLinkage":
+    import do_benchmark_lumbermark_test
+    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl
+elif method == "Test_Lumbermark":
+    import do_benchmark_lumbermark_test
+    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica
@@ -299,7 +311,7 @@ def benchmark(battery, dataset, benchmarks_path,
 
     print("## %-45s (n=%6d, Ks=%10r)" %
         ("%s/%s/%s/%s"%(preprocess, method, battery, dataset),
-        X.shape[0], list(Ks)), end="", flush=True)
+        X.shape[0], Ks), end="", flush=True)
 
     if len(Ks) == 0:
         print(" (file already exists)", flush=True)

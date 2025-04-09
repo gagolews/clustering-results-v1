@@ -1,0 +1,93 @@
+"""
+Copyright (C) 2020-2025, Marek Gagolewski, https://www.gagolewski.com
+
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+import sys
+sys.path.append("/home/gagolews/Python/genieclust/.devel")
+sys.setrecursionlimit(100000)
+
+
+import genieclust
+import lumbermark
+import robust_single_linkage
+import numpy as np
+
+import sklearn.model_selection
+
+
+def do_benchmark_test_lumbermark(X, Ks):
+    res = dict()
+    for K in Ks: res[K] = dict()
+
+    param_grid = sklearn.model_selection.ParameterGrid(dict(
+        cut_internodes=[True, False],
+        max_twig_size=[0, 3, 5, 10, None],
+        cluster_size_factor=[0.05, 0.075, 0.1],
+        outlier_factor=[1.5, 3],
+        n_neighbors=[0, 3, 5, 10],
+    ))
+
+    print(" >:", end="", flush=True)
+    for K in Ks:
+        print(" ", end="", flush=True)
+        for param in param_grid:
+            if param["n_neighbors"] == 0:
+                if not (param["max_twig_size"] is None and param["cut_internodes"]==True and param["outlier_factor"] == 1.5):
+                    continue
+
+            print(".", end="", flush=True)
+            name = ",".join(["%r" % v for v in param.values()])
+            try:
+                res[K][f"Test_Lumbermark_{name}"] = lumbermark.Lumbermark(n_clusters=K, **param).fit_predict(X)  # TODO: 1->0 based
+            except Exception as e:
+                    print("%s: %s" % (e.__class__.__name__, format(e)))
+
+    print(":<", end="", flush=True)
+    return res
+
+
+
+def do_benchmark_test_robustsl(X, Ks):
+    res = dict()
+    for K in Ks: res[K] = dict()
+
+    param_grid = sklearn.model_selection.ParameterGrid(dict(
+        min_cluster_size=[1, 5, 10, 15],
+        min_cluster_factor=[0, 0.05, 0.1, 0.15, 0.2],
+        skip_leaves=[True, False],
+        M=[1, 3, 5, 7, 10]
+    ))
+
+    print(" >:", end="", flush=True)
+    for K in Ks:
+        print(" ", end="", flush=True)
+        for param in param_grid:
+            print(".", end="", flush=True)
+            name = ",".join(["%r" % v for v in param.values()])
+            try:
+                res[K][f"Test_RobustSingleLinkage_{name}"] = robust_single_linkage.RobustSingleLinkageClustering(n_clusters=K, **param).fit_predict(X)  # TODO: 1->0 based
+            except Exception as e:
+                    print("%s: %s" % (e.__class__.__name__, format(e)))
+
+    print(":<", end="", flush=True)
+    return res
+

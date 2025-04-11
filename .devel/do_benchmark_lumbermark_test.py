@@ -111,7 +111,7 @@ def do_benchmark_test_robustsl_treelhouette(X, Ks):
         for L in Ls:
             print(".", end="", flush=True)
             _y = L.fit_predict(X)
-            s1, s2 = treelhouette.treelhouette_score(L)
+            s1, s2 = treelhouette.treelhouette_score(L, skip_leaves=True)
             s = s2  # s2 seems to work better
             if best_score < -1 or best_score < s:
                 best_score = s

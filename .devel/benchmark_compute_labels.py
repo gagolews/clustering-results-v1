@@ -76,6 +76,7 @@ method = [
     "GIc",     # GIc - default parameters
     "Test_GIc", # GIc - many parameters (for testing)
     "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
+    "Test_RobustSingleLinkage_Treelhouette",
     "Test_RobustSingleLinkage",
     "Test_Lumbermark",
     "Test_GenieM",
@@ -93,7 +94,7 @@ method = [
     "sklearn_gm",
     "sklearn_spectral",
     "fcps_nonproj",
-][6]
+][4]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -126,6 +127,9 @@ elif method == "Test_GIc":
 elif method == "Test_GenieM":
     import do_benchmark_genieclust_test
     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
+elif method == "Test_RobustSingleLinkage_Treelhouette":
+    import do_benchmark_lumbermark_test
+    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl_treelhouette
 elif method == "Test_RobustSingleLinkage":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl

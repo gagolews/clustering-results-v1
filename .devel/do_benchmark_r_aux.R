@@ -1,4 +1,4 @@
-# Copyright (C) 2023, Marek Gagolewski, https://www.gagolewski.com
+# Copyright (C) 2023-2025, Marek Gagolewski, https://www.gagolewski.com
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,9 @@
 # install.packages("FCPS", dependencies=TRUE)
 suppressPackageStartupMessages(library("FCPS", quietly=TRUE, verbose=FALSE))
 
+# dbscan 1.2.2 downloaded on 2025-04-15
+suppressPackageStartupMessages(library("dbscan", quietly=TRUE, verbose=FALSE))
+
 set.seed(123)
 
 # We select all algorithms which return an a priori-given number of clusters,
@@ -30,7 +33,7 @@ set.seed(123)
 
 # We skip methods that are available in fastcluster and scikit-learn
 
-cases <- list(
+fcps_cases <- list(
     # Affinity propagation (Apclustering) - does not allow k
     # DBSCAN - does not allow k
     # DensityPeakClustering - does not allow k
@@ -79,8 +82,8 @@ fcps_nonproj_apply <- function(data, k, verbose=FALSE)
     d <- as.matrix(dist(data))
 
     res <- list()
-    for (i in seq_along(cases)) {
-        case <- cases[[i]]
+    for (i in seq_along(fcps_cases)) {
+        case <- fcps_cases[[i]]
 
         fun <- case[[1]]
         if ("DataOrDistances" %in% names(formals(fun)))
@@ -96,9 +99,45 @@ fcps_nonproj_apply <- function(data, k, verbose=FALSE)
             .t <- tabulate(y_pred)
             stopifnot(y_pred > 0, length(.t) == k, .t > 0)
 
-            res[[names(cases)[i]]] <- as.integer(y_pred)
+            res[[names(fcps_cases)[i]]] <- as.integer(y_pred)
             if (verbose) cat(".")
         }, error=function(e) cat("X"))
     }
+    res
+}
+
+
+
+hdbscan_apply <- function(data, k, verbose=FALSE)
+{
+    d <- as.matrix(dist(data))
+
+    res <- list()
+
+    # effectively, single linkage over the mutual reachability distance space
+    .minPts <- c(3, 5, 7, 10, 15, 20, 25)
+    .eps <- c(0, 0.25, 0.5, 0.75, 1.0, Inf)  # no benefit...
+
+    for (minPts in .minPts) {
+        for (eps in .eps) {
+            case_name <- sprintf("R_HDBSCAN_%d_%g", minPts, eps)
+
+            tryCatch({
+
+                db <- dbscan::hdbscan(x=data, minPts=minPts, cluster_selection_epsilon=eps, gen_hdbscan_tree=TRUE)
+
+                T <- as.hclust(as.dendrogram(db$hdbscan_tree))
+                y_pred <- as.integer(cutree(T, k))
+                stopifnot(y_pred > 0, y_pred <= k)
+
+                .t <- tabulate(y_pred)
+                stopifnot(length(.t) == k, .t > 0)
+
+                res[[case_name]] <- y_pred
+                if (verbose) cat(".")
+            }, error=function(e) cat("X"))
+        }
+    }
+
     res
 }

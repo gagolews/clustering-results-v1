@@ -5,3 +5,6 @@ information_theoretic_mst
 *~
 lukaszbrzozowski-msts
 original/Test*
+original/Test_*
+original/Test_RobustSingleLinkage_Treelhouette/
+.devel/original/

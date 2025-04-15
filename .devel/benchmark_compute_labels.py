@@ -66,7 +66,7 @@ preprocessors = ["original", "scale_standard", "scale_robust"][:1]
 small_only = True
 
 # TODO: select one or more test batteries (must be a list)
-batteries = ["wut", "graves", "other", "fcps", "sipu", "uci",
+batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
              "mnist", "h2mg", "g2mg"][:6]
 
 
@@ -93,8 +93,9 @@ method = [
     "sklearn_birch",
     "sklearn_gm",
     "sklearn_spectral",
-    "fcps_nonproj",
-][4]
+    "r_fcps_nonproj",
+    "r_hdbscan"
+][-1]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -172,9 +173,12 @@ elif method == "fastcluster_ward":
 elif method == "fastcluster_centroid":
     import do_benchmark_fastcluster
     do_benchmark = do_benchmark_fastcluster.do_benchmark_centroid
-elif method == "fcps_nonproj":
-    import do_benchmark_fcps
-    do_benchmark = do_benchmark_fcps.do_benchmark_fcps_nonproj
+elif method == "r_fcps_nonproj":
+    import do_benchmark_r
+    do_benchmark = do_benchmark_r.do_benchmark_fcps_nonproj
+elif method == "r_hdbscan":
+    import do_benchmark_r
+    do_benchmark = do_benchmark_r.do_benchmark_hdbscan
 else:
     raise Exception("unknown `method`")
 

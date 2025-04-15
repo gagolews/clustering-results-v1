@@ -28,19 +28,20 @@ from rpy2.robjects.packages import importr
 import rpy2.robjects.numpy2ri
 r_base = importr("base")
 #r_base.Sys_setenv(R_LIBS_USER='/home/gagolews/R/x86_64-pc-linux-gnu-library/4.3/')
-r_base.source(".devel/do_benchmark_fcps_aux.R")
+r_base.source(".devel/do_benchmark_r_aux.R")
 
 import numpy as np
 import warnings
 
-def do_benchmark_fcps_nonproj(X, Ks):
+
+def r_do_benchmark(X, Ks, rF_name):
     #max_K = max(max(Ks), 16)  # just in case we'll need more in the future
     #Ks = list(range(2, max_K+1))
     Ks = np.unique(Ks).tolist()
     res = dict()
     for K in Ks: res[K] = dict()
 
-    rF = rpy2.rinterface.globalenv['fcps_nonproj_apply']
+    rF = rpy2.rinterface.globalenv[rF_name]
     eX = list(X.astype("double").ravel())
     rX = r_base.matrix(
         rpy2.rinterface.vector(eX, rpy2.rinterface.RTYPES.REALSXP),
@@ -60,3 +61,11 @@ def do_benchmark_fcps_nonproj(X, Ks):
         print(":", end="", flush=True)
     print("<", end="", flush=True)
     return res
+
+
+
+def do_benchmark_fcps_nonproj(X, Ks):
+    return r_do_benchmark(X, Ks, 'fcps_nonproj_apply')
+
+def do_benchmark_hdbscan(X, Ks):
+    return r_do_benchmark(X, Ks, 'hdbscan_apply')

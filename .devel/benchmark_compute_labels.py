@@ -134,7 +134,7 @@ elif method == "Test_RobustSingleLinkage_Treelhouette":
 elif method == "Test_RobustSingleLinkage":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl
-elif method == "Test_Lumbermark":
+elif method == "Test_Lumbermark2":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark
 elif method == "IcA":
@@ -292,7 +292,7 @@ def benchmark(battery, dataset, benchmarks_path,
     X = load_data(input_fname_base+".data.gz", preprocess)
 
 
-    if small_only and X.shape[0] >= 10_000:
+    if small_only and (X.shape[0] >= 10_000):
         return
 
 

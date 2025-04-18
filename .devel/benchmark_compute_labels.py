@@ -292,7 +292,7 @@ def benchmark(battery, dataset, benchmarks_path,
     X = load_data(input_fname_base+".data.gz", preprocess)
 
 
-    if small_only and X.shape[0] >= 3000:
+    if small_only and X.shape[0] >= 10_000:
         return
 
 

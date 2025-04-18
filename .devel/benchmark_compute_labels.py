@@ -74,11 +74,10 @@ batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
 method = [
     "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
     "GIc",     # GIc - default parameters
-    "Test_GIc", # GIc - many parameters (for testing)
-    "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
-    "Test_RobustSingleLinkage_Treelhouette",
     "Test_RobustSingleLinkage",
     "Test_Lumbermark",
+    "Test_GIc", # GIc - many parameters (for testing)
+    "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
     "Test_GenieM",
     "GenieApprox",
     "IcA",     # IcA (via GIc)
@@ -95,7 +94,8 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][-1]
+    # "Test_RobustSingleLinkage_Treelhouette",  # TODO: DELME
+][3]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -292,7 +292,7 @@ def benchmark(battery, dataset, benchmarks_path,
     X = load_data(input_fname_base+".data.gz", preprocess)
 
 
-    if small_only and X.shape[0] >= 10_000:
+    if small_only and X.shape[0] >= 3000:
         return
 
 

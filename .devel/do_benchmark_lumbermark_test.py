@@ -39,21 +39,18 @@ def do_benchmark_test_lumbermark(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(
-        cut_internodes=[True, False],
-        max_twig_size=[0, 3, 5, 10, None],
-        cluster_size_factor=[0.05, 0.075, 0.1],
-        outlier_factor=[1.5, 3],
-        n_neighbors=[0, 3, 5, 10],
+        min_cluster_size=[1, 5, 10, 15],
+        min_cluster_factor=[0, 0.05, 0.1, 0.15, 0.2, 0.25],
+        skip_leaves=[True, False],
+        n_neighbors=[3, 5, 7, 10, 15, None],
+        noise_threshold=["half", "uhalf", "-1", "0", "1", "2"],
+        noise_postprocess=["tree", "closest"],
     ))
 
     print(" >:", end="", flush=True)
     for K in Ks:
         print(" ", end="", flush=True)
         for param in param_grid:
-            if param["n_neighbors"] == 0:
-                if not (param["max_twig_size"] is None and param["cut_internodes"]==True and param["outlier_factor"] == 1.5):
-                    continue
-
             print(".", end="", flush=True)
             name = ",".join(["%r" % v for v in param.values()])
             try:
@@ -74,7 +71,7 @@ def do_benchmark_test_robustsl(X, Ks):
         min_cluster_size=[1, 5, 10, 15],
         min_cluster_factor=[0, 0.05, 0.1, 0.15, 0.2, 0.25],
         skip_leaves=[True, False],
-        M=[1, 3, 5, 7]
+        M=[1, 4, 6, 8, 11, 16, None]
     ))
 
     print(" >:", end="", flush=True)

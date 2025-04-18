@@ -263,7 +263,7 @@ def do_benchmark_test_geniem(X, Ks):
     )
 
     print(" >:", end="", flush=True)
-    for M in sorted([1, 3, 5, 7, 10])[::-1]:  # decreasing M => NNs are reused
+    for M in sorted([4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
         for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
             method = "Genie_G%.1f_M%d"%(g,M)
             genie.set_params(gini_threshold=g, M=M)

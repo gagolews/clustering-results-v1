@@ -39,12 +39,12 @@ def do_benchmark_test_lumbermark(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(
-        min_cluster_size=[1, 5, 10, 15],
-        min_cluster_factor=[0, 0.05, 0.1, 0.15, 0.2, 0.25],
-        skip_leaves=[True, False],
-        n_neighbors=[3, 5, 7, 10, 15, None],
-        noise_threshold=["half", "uhalf", "-1", "0", "1", "2"],
-        noise_postprocess=["tree", "closest"],
+        min_cluster_factor=[0.075, 0.125, 0.25, 0.375, 0.5, 0.75, 1.0],
+        n_neighbors=[3, 5, 7, 10, 15],
+        min_cluster_size=[10], #[1, 5, 10, 15],
+        skip_leaves=[True],  #[True, False],
+        noise_threshold=["uhalf"], #["half", "uhalf", "-1", "0", "1", "2"],
+        noise_postprocess=["tree"], #["tree", "closest"],
     ))
 
     print(" >:", end="", flush=True)
@@ -54,9 +54,16 @@ def do_benchmark_test_lumbermark(X, Ks):
             print(".", end="", flush=True)
             name = ",".join(["%r" % v for v in param.values()])
             try:
-                res[K][f"Test_Lumbermark_{name}"] = lumbermark.Lumbermark(n_clusters=K, **param).fit_predict(X)  # TODO: 1->0 based
+                try:
+                    res[K][f"Test_Lumbermark_{name}"] = lumbermark.Lumbermark(n_clusters=K, **param).fit_predict(X)  # TODO: 1->0 based
+                except Exception as e:
+                    if param["skip_leaves"]:
+                        param["skip_leaves"] = False  # for sipy/spiral
+                        res[K][f"Test_Lumbermark_{name}"] = lumbermark.Lumbermark(n_clusters=K, **param).fit_predict(X)  # TODO: 1->0 based
+                    else:
+                        print("%s: %s" % (e.__class__.__name__, format(e)))
             except Exception as e:
-                    print("%s: %s" % (e.__class__.__name__, format(e)))
+                print("%s: %s" % (e.__class__.__name__, format(e)))
 
     print(":<", end="", flush=True)
     return res
@@ -68,10 +75,10 @@ def do_benchmark_test_robustsl(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(
-        min_cluster_size=[1, 5, 10, 15],
-        min_cluster_factor=[0, 0.05, 0.1, 0.15, 0.2, 0.25],
-        skip_leaves=[True, False],
-        M=[1, 4, 6, 8, 11, 16, None]
+        M=[1, 4, 6, 8, 11, 16],
+        min_cluster_factor=[0.075, 0.125, 0.25, 0.375, 0.5, 0.75, 1.0],
+        skip_leaves=[True],  #[True, False],
+        min_cluster_size=[10],
     ))
 
     print(" >:", end="", flush=True)

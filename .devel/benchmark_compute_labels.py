@@ -95,7 +95,7 @@ method = [
     "r_fcps_nonproj",
     "r_hdbscan"
     # "Test_RobustSingleLinkage_Treelhouette",  # TODO: DELME
-][3]
+][2]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -134,7 +134,7 @@ elif method == "Test_RobustSingleLinkage_Treelhouette":
 elif method == "Test_RobustSingleLinkage":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl
-elif method == "Test_Lumbermark2":
+elif method == "Test_Lumbermark":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark
 elif method == "IcA":

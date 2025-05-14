@@ -1,5 +1,5 @@
 """
-Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2025, Marek Gagolewski, https://www.gagolewski.com
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,7 @@ def do_benchmark_genie(X, Ks):
         for K in Ks:
             genie.set_params(gini_threshold=g)
             genie.set_params(n_clusters=K)
-            labels_pred = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+            labels_pred = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
             res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":<", end="", flush=True)
@@ -70,7 +70,7 @@ def do_benchmark_gic(X, Ks):
     for K in Ks:
         method = "GIc"
         gic.set_params(n_clusters=K)
-        labels_pred = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
+        labels_pred = gic.fit_predict(X)+1  # 0-based -> 1-based!!!
         if gic.n_clusters_ == K:
             # due to noise points, some K-partitions might be unavailable
             res[K][method] = labels_pred
@@ -97,7 +97,7 @@ def do_benchmark_ica(X, Ks):
 
     print(" >:", end="", flush=True)
     method = "IcA"
-    labels_pred_matrix = ica.fit_predict(X)+1 # 0-based -> 1-based!!!
+    labels_pred_matrix = ica.fit_predict(X)+1  # 0-based -> 1-based!!!
     for K in Ks:
         res[K][method] = labels_pred_matrix[K]
     print(":<", end="", flush=True)

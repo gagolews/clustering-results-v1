@@ -70,12 +70,11 @@ batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
              "mnist", "h2mg", "g2mg"][:6]
 
 
-# TODO: register new METHOD here, then select it
+# TODO: register a new METHOD here, then select it
 method = [
     "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
     "GIc",     # GIc - default parameters
-    "Test_RobustSingleLinkage",
-    "Test_Lumbermark",
+    "Lumbermark",
     "Test_GIc", # GIc - many parameters (for testing)
     "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
     "Test_GenieM",
@@ -94,8 +93,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-    # "Test_RobustSingleLinkage_Treelhouette",  # TODO: DELME
-][2]
+][5]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -128,13 +126,7 @@ elif method == "Test_GIc":
 elif method == "Test_GenieM":
     import do_benchmark_genieclust_test
     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
-elif method == "Test_RobustSingleLinkage_Treelhouette":
-    import do_benchmark_lumbermark_test
-    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl_treelhouette
-elif method == "Test_RobustSingleLinkage":
-    import do_benchmark_lumbermark_test
-    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_robustsl
-elif method == "Test_Lumbermark":
+elif method == "Lumbermark":
     import do_benchmark_lumbermark_test
     do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark
 elif method == "IcA":

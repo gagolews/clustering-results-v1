@@ -1,5 +1,5 @@
 """
-Copyright (C) 2020-2023, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2025, Marek Gagolewski, https://www.gagolewski.com
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,7 @@ def do_benchmark_genie(X, Ks):
         for K in Ks:
             genie.set_params(gini_threshold=g)
             genie.set_params(n_clusters=K)
-            labels_pred = genie.fit_predict(X) + 1 # 0-based -> 1-based!!!
+            labels_pred = genie.fit_predict(X) + 1  # 0-based -> 1-based!!!
             res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":<", end="", flush=True)
@@ -70,7 +70,7 @@ def do_benchmark_gic(X, Ks):
     for K in Ks:
         method = "GIc"
         gic.set_params(n_clusters=K)
-        labels_pred = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
+        labels_pred = gic.fit_predict(X)+1  # 0-based -> 1-based!!!
         if gic.n_clusters_ == K:
             # due to noise points, some K-partitions might be unavailable
             res[K][method] = labels_pred
@@ -97,7 +97,7 @@ def do_benchmark_ica(X, Ks):
 
     print(" >:", end="", flush=True)
     method = "IcA"
-    labels_pred_matrix = ica.fit_predict(X)+1 # 0-based -> 1-based!!!
+    labels_pred_matrix = ica.fit_predict(X)+1  # 0-based -> 1-based!!!
     for K in Ks:
         res[K][method] = labels_pred_matrix[K]
     print(":<", end="", flush=True)
@@ -143,7 +143,7 @@ def do_benchmark_test_gic(X, Ks):
                         n_features=n_features,
                         gini_thresholds=g,
                         add_clusters=add)
-                labels_pred = gic.fit_predict(X)+1 # 0-based -> 1-based!!!
+                labels_pred = gic.fit_predict(X)+1  # 0-based -> 1-based!!!
                 res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":", end="", flush=True)
@@ -184,7 +184,7 @@ def do_benchmark_test_genie_forced_merge(X, Ks):
         for K in Ks:
             genie.set_params(gini_threshold=g)
             genie.set_params(n_clusters=K)
-            labels_pred = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+            labels_pred = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
             res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":<", end="", flush=True)
@@ -213,7 +213,7 @@ def do_benchmark_genieapprox(X, Ks):
             for K in Ks:
                 genie.set_params(gini_threshold=g)
                 genie.set_params(n_clusters=K)
-                labels_pred = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+                labels_pred = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
                 res[K][method] = labels_pred
         print(".", end="", flush=True)
     print(":<", end="", flush=True)
@@ -263,11 +263,11 @@ def do_benchmark_test_geniem(X, Ks):
     )
 
     print(" >:", end="", flush=True)
-    for M in sorted([4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
+    for M in sorted([2, 4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
         for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
             method = "Genie_G%.1f_M%d"%(g,M)
             genie.set_params(gini_threshold=g, M=M)
-            labels_pred_matrix = genie.fit_predict(X)+1 # 0-based -> 1-based!!!
+            labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
             # note some K-partitions might be unavailable (too many noise points):
             for K in range(labels_pred_matrix.shape[0]):
                 if K == 1: continue # ignore

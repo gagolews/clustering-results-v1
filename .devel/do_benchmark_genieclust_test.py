@@ -263,9 +263,9 @@ def do_benchmark_test_geniem(X, Ks):
     )
 
     print(" >:", end="", flush=True)
-    for M in sorted([2, 4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
-        for g in [0.1, 0.3, 0.5, 0.7, 1.0]:
-            method = "Genie_G%.1f_M%d"%(g,M)
+    for M in sorted([1, 2, 4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
+        for g in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
+            method = "GenieM_G%g_M%d"%(g,M)
             genie.set_params(gini_threshold=g, M=M)
             labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
             # note some K-partitions might be unavailable (too many noise points):

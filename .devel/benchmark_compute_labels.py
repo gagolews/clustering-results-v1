@@ -74,11 +74,11 @@ batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
 method = [
     "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
     "GIc",     # GIc - default parameters
-    "Lumbermark",
-    "Test_GIc", # GIc - many parameters (for testing)
-    "Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
     "Test_GenieM",
-    "GenieApprox",
+    "Lumbermark",
+    #"Test_GIc", # GIc - many parameters (for testing)
+    #"Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
+    #"GenieApprox",
     "IcA",     # IcA (via GIc)
     "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
     "fastcluster_median",
@@ -93,7 +93,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][5]
+][2]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -111,24 +111,24 @@ method = [
 if method == "Genie":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_genie
-elif method == "GenieApprox":
-    import do_benchmark_genieclust_test
-    do_benchmark = do_benchmark_genieclust_test.do_benchmark_genieapprox
-elif method == "Test_Genie_ForcedMerge":
-    import do_benchmark_genieclust_test
-    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_genie_forced_merge
+# elif method == "GenieApprox":
+#     import do_benchmark_genieclust_test
+#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_genieapprox
+# elif method == "Test_Genie_ForcedMerge":
+#     import do_benchmark_genieclust_test
+#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_genie_forced_merge
 elif method == "GIc":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_gic
-elif method == "Test_GIc":
-    import do_benchmark_genieclust_test
-    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_gic
+# elif method == "Test_GIc":
+#     import do_benchmark_genieclust_test
+#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_gic
 elif method == "Test_GenieM":
     import do_benchmark_genieclust_test
     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
-elif method == "Lumbermark":
-    import do_benchmark_lumbermark_test
-    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark
+elif method == "Lumbermark":  # TODO
+    import do_benchmark_lumbermark_test  # TODO
+    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark  # TODO
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica

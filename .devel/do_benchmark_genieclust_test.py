@@ -41,27 +41,27 @@ def do_benchmark_test_geniem(X, Ks):
     )
 
     print(" >:", end="", flush=True)
-    eps = 0.00000011920928955078125
-    for mutreach_adj_type in ["-c", "-d", "+d", "+c"][:1]:
-        for M in sorted([1, 2, 4, 6, 8, 11, 16])[::-1]:  # decreasing M => NNs are reused
-            for g in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
-                method = "GenieM_G%g_M%d%s"%(g, M, mutreach_adj_type)
-                if mutreach_adj_type == "-d":
-                    mutreach_adj = -eps
-                elif mutreach_adj_type == "+d":
-                    mutreach_adj = +eps
-                elif mutreach_adj_type == "-c":
-                    mutreach_adj = -1-eps
-                elif mutreach_adj_type == "+c":
-                    mutreach_adj = +1+eps
-                else: stop("incorrect mutreach_adj")
+    # eps = 0.00000011920928955078125
+    # for mutreach_adj_type in ["-c", "-d", "+d", "+c"][:1]:
+    for M in sorted([0, 1, 2, 3, 5, 7, 10, 15, 25])[::-1]:  # decreasing M => NNs are reused
+        for g in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
+            method = "GenieM_G%g_M%d"%(g, M)
+                # if mutreach_adj_type == "-d":
+                #     mutreach_adj = -eps
+                # elif mutreach_adj_type == "+d":
+                #     mutreach_adj = +eps
+                # elif mutreach_adj_type == "-c":
+                #     mutreach_adj = -1-eps
+                # elif mutreach_adj_type == "+c":
+                #     mutreach_adj = +1+eps
+                # else: stop("incorrect mutreach_adj")
 
-                genie.set_params(gini_threshold=g, M=M, quitefastmst_params=dict(mutreach_adj=mutreach_adj))
-                labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
-                # note some K-partitions might be unavailable (too many noise points):
-                for K in range(labels_pred_matrix.shape[0]):
-                    if K == 1: continue # ignore
-                    res[K][method] = labels_pred_matrix[K]
+            genie.set_params(gini_threshold=g, M=M, postprocess="all")
+            labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
+            # note some K-partitions might be unavailable (too many noise points):
+            for K in range(labels_pred_matrix.shape[0]):
+                if K == 1: continue # ignore
+                res[K][method] = labels_pred_matrix[K]
             print(".", end="", flush=True)
         print(":", end="", flush=True)
     print("<", end="", flush=True)

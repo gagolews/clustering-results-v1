@@ -38,49 +38,60 @@ def do_benchmark_test_lumbermark(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(    # TODO
-        M=[1, 2, 4, 6, 8, 11, 16],
+        M=[0, 1, 2, 3, 5, 7],
         min_cluster_factor=[0.05, 0.1, 0.15, 0.25, 0.33],
-        mutreach_adj_type=["-c", "-d", "+d", "+c"][:1],
+        # mutreach_adj_type=["-c", "-d", "+d", "+c"][:1],
         #skip_leaves=[True],  #[True, False],  # False is worse
         # min_cluster_size=[10],  # not significant
     ))
 
-    eps = 0.00000011920928955078125
+    # eps = 0.00000011920928955078125
     print(" >:", end="", flush=True)
     for K in Ks:
         print(" ", end="", flush=True)
         for param in param_grid:
             print(".", end="", flush=True)
-            if param["mutreach_adj_type"] == "-d":
-                mutreach_adj = -eps
-            elif param["mutreach_adj_type"] == "+d":
-                mutreach_adj = +eps
-            elif param["mutreach_adj_type"] == "-c":
-                mutreach_adj = -1-eps
-            elif param["mutreach_adj_type"] == "+c":
-                mutreach_adj = +1+eps
-            else: stop("incorrect mutreach_adj")
+            # if param["mutreach_adj_type"] == "-d":
+            #     mutreach_adj = -eps
+            # elif param["mutreach_adj_type"] == "+d":
+            #     mutreach_adj = +eps
+            # elif param["mutreach_adj_type"] == "-c":
+            #     mutreach_adj = -1-eps
+            # elif param["mutreach_adj_type"] == "+c":
+            #     mutreach_adj = +1+eps
+            # else: stop("incorrect mutreach_adj")
 
-            name = "f%g_M%d%s"%(param["min_cluster_factor"], param["M"], param["mutreach_adj_type"])
+            # name = "f%g_M%d%s"%(param["min_cluster_factor"], param["M"], param["mutreach_adj_type"])
+            name = "f%g_M%d"%(param["min_cluster_factor"], param["M"])
             try:
                 y_pred = lumbermark.Lumbermark(
                     n_clusters=K,
                     postprocess="all",
                     M=param["M"],
                     min_cluster_factor=param["min_cluster_factor"],
-                    quitefastmst_params=dict(mutreach_adj=mutreach_adj)
+                    # quitefastmst_params=dict(mutreach_adj=mutreach_adj)
                 ).fit_predict(X)    # TODO
-                if max(y_pred) != K-1 and param["mutreach_adj_type"] == "-c":
+                if max(y_pred) != K-1:
                     y_pred = lumbermark.Lumbermark(
                         n_clusters=K,
                         postprocess="all",
                         min_cluster_size=5,
                         M=param["M"],
                         min_cluster_factor=param["min_cluster_factor"],
-                        quitefastmst_params=dict(mutreach_adj=-eps)
+                        # quitefastmst_params=dict(mutreach_adj=-eps)
                     ).fit_predict(X)
                     if max(y_pred) != K-1:
-                        stop()
+                        y_pred = lumbermark.Lumbermark(
+                            n_clusters=K,
+                            postprocess="all",
+                            # min_cluster_size=5,
+                            M=param["M"],
+                            skip_leaves=False,
+                            min_cluster_factor=param["min_cluster_factor"],
+                            # quitefastmst_params=dict(mutreach_adj=-eps)
+                        ).fit_predict(X)
+                        if max(y_pred) != K-1:
+                            stop()
 
                 res[K][f"Lumbermark_{name}"] = y_pred+1    # 0-based -> 1-based!!!
             except Exception as e:

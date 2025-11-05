@@ -93,7 +93,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][3]
+][2]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters

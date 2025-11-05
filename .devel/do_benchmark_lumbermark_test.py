@@ -38,10 +38,10 @@ def do_benchmark_test_lumbermark(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(    # TODO
-        M=[0, 1, 2, 3, 5, 7],
+        M=[0, 1, 2, 3, 5, 7, 10, 15],
         min_cluster_factor=[0.05, 0.1, 0.15, 0.25, 0.33],
         # mutreach_adj_type=["-c", "-d", "+d", "+c"][:1],
-        #skip_leaves=[True],  #[True, False],  # False is worse
+        preprocess=["none", "leaves"],
         # min_cluster_size=[10],  # not significant
     ))
 
@@ -62,14 +62,17 @@ def do_benchmark_test_lumbermark(X, Ks):
             # else: stop("incorrect mutreach_adj")
 
             # name = "f%g_M%d%s"%(param["min_cluster_factor"], param["M"], param["mutreach_adj_type"])
-            name = "f%g_M%d"%(param["min_cluster_factor"], param["M"])
+            name = "f%g_M%d_%r"%(
+                param["min_cluster_factor"], param["M"], param["preprocess"]
+            )
             try:
                 y_pred = lumbermark.Lumbermark(
                     n_clusters=K,
                     postprocess="all",
                     M=param["M"],
+                    preprocess=param["preprocess"],
                     min_cluster_factor=param["min_cluster_factor"],
-                    # quitefastmst_params=dict(mutreach_adj=mutreach_adj)
+                    # quitefastmst_params=dict()
                 ).fit_predict(X)    # TODO
                 if max(y_pred) != K-1:
                     y_pred = lumbermark.Lumbermark(
@@ -77,6 +80,7 @@ def do_benchmark_test_lumbermark(X, Ks):
                         postprocess="all",
                         min_cluster_size=5,
                         M=param["M"],
+                        preprocess=param["preprocess"],
                         min_cluster_factor=param["min_cluster_factor"],
                         # quitefastmst_params=dict(mutreach_adj=-eps)
                     ).fit_predict(X)
@@ -86,7 +90,7 @@ def do_benchmark_test_lumbermark(X, Ks):
                             postprocess="all",
                             # min_cluster_size=5,
                             M=param["M"],
-                            skip_leaves=False,
+                            preprocess="none",
                             min_cluster_factor=param["min_cluster_factor"],
                             # quitefastmst_params=dict(mutreach_adj=-eps)
                         ).fit_predict(X)

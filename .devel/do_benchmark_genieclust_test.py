@@ -25,6 +25,7 @@ SOFTWARE.
 
 import genieclust
 import numpy as np
+import sklearn.model_selection
 
 
 def do_benchmark_test_geniem(X, Ks):
@@ -33,36 +34,58 @@ def do_benchmark_test_geniem(X, Ks):
     res = dict()
     for K in Ks: res[K] = dict()
 
+    param_grid = sklearn.model_selection.ParameterGrid(dict(    # TODO
+        M=[0, 1, 2, 3, 5, 7, 10, 15][::-1],  # decreasing M => NNs are reused,
+        gini_threshold=[0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        # mutreach_adj_type=["-c", "-d", "+d", "+c"][:1],
+        preprocess=["none", "leaves"],
+    ))
+
+
     genie = genieclust.Genie(
         n_clusters=max_K,
         #compute_full_tree=True,
         postprocess="all",
-        compute_all_cuts=True
+        compute_all_cuts=True,
+        # quitefastmst_params=dict(),
     )
 
     print(" >:", end="", flush=True)
-    # eps = 0.00000011920928955078125
-    # for mutreach_adj_type in ["-c", "-d", "+d", "+c"][:1]:
-    for M in sorted([0, 1, 2, 3, 5, 7, 10, 15, 25])[::-1]:  # decreasing M => NNs are reused
-        for g in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
-            method = "GenieM_G%g_M%d"%(g, M)
-                # if mutreach_adj_type == "-d":
-                #     mutreach_adj = -eps
-                # elif mutreach_adj_type == "+d":
-                #     mutreach_adj = +eps
-                # elif mutreach_adj_type == "-c":
-                #     mutreach_adj = -1-eps
-                # elif mutreach_adj_type == "+c":
-                #     mutreach_adj = +1+eps
-                # else: stop("incorrect mutreach_adj")
+    for param in param_grid:
+        print(".", end="", flush=True)
+        name = "G%g_M%d_%r"%(
+            param["gini_threshold"], param["M"], param["preprocess"]
+        )
 
-            genie.set_params(gini_threshold=g, M=M, postprocess="all")
-            labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
-            # note some K-partitions might be unavailable (too many noise points):
-            for K in range(labels_pred_matrix.shape[0]):
-                if K == 1: continue # ignore
-                res[K][method] = labels_pred_matrix[K]
-            print(".", end="", flush=True)
+        genie.set_params(
+            gini_threshold=param["gini_threshold"],
+            M=param["M"],
+            preprocess=param["preprocess"],
+            postprocess="all",
+        )
+
+        labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!
+        # note some K-partitions might be unavailable (too many noise points):
+        for K in range(labels_pred_matrix.shape[0]):
+            if K == 1: continue # ignore
+            res[K][name] = labels_pred_matrix[K]
+
+        # print(" >:", end="", flush=True)
+        # # eps = 0.00000011920928955078125
+        # # for mutreach_adj_type in ["-c", "-d", "+d", "+c"][:1]:
+        # for M in sorted([0, 1, 2, 3, 5, 7, 10, 15, 25])[::-1]:  # decreasing M => NNs are reused
+        #     for g in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
+        #         method = "GenieM_G%g_M%d"%(g, M)
+        #             # if mutreach_adj_type == "-d":
+        #             #     mutreach_adj = -eps
+        #             # elif mutreach_adj_type == "+d":
+        #             #     mutreach_adj = +eps
+        #             # elif mutreach_adj_type == "-c":
+        #             #     mutreach_adj = -1-eps
+        #             # elif mutreach_adj_type == "+c":
+        #             #     mutreach_adj = +1+eps
+        #             # else: stop("incorrect mutreach_adj")
+
         print(":", end="", flush=True)
     print("<", end="", flush=True)
     return res

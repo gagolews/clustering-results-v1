@@ -35,17 +35,18 @@ def do_benchmark_test_geniem(X, Ks):
     for K in Ks: res[K] = dict()
 
     param_grid = sklearn.model_selection.ParameterGrid(dict(    # TODO
-        M=[0, 1, 2, 3, 5, 7, 10, 15][::-1],  # decreasing M => NNs are reused,
+        M=[0, 2, 3, 5, 7, 10, 15][::-1],  # decreasing M => NNs are reused,
         gini_threshold=[0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
         # mutreach_adj_type=["-c", "-d", "+d", "+c"][:1],
-        preprocess=["none", "leaves"],
+        #preprocess=["none", "leaves"],
     ))
 
 
     genie = genieclust.Genie(
         n_clusters=max_K,
-        #compute_full_tree=True,
+        compute_full_tree=False,
         postprocess="all",
+        preprocess="none",
         compute_all_cuts=True,
         # quitefastmst_params=dict(),
     )
@@ -53,15 +54,13 @@ def do_benchmark_test_geniem(X, Ks):
     print(" >:", end="", flush=True)
     for param in param_grid:
         print(".", end="", flush=True)
-        name = "G%g_M%d_%r"%(
-            param["gini_threshold"], param["M"], param["preprocess"]
+        name = "G%g_M%d"%(
+            param["gini_threshold"], param["M"]
         )
 
         genie.set_params(
             gini_threshold=param["gini_threshold"],
-            M=param["M"],
-            preprocess=param["preprocess"],
-            postprocess="all",
+            M=param["M"]
         )
 
         labels_pred_matrix = genie.fit_predict(X)+1  # 0-based -> 1-based!!!

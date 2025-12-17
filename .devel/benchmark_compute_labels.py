@@ -93,7 +93,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][2]
+][3]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -128,7 +128,7 @@ elif method == "Test_GenieM": # TODO
     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
 elif method == "Test_Lumbermark":  # TODO
     import do_benchmark_lumbermark_test  # TODO
-    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark  # TODO
+    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark_tmp  # TODO
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica

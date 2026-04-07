@@ -9,7 +9,7 @@ Apply a registered (see below for details) clustering METHOD on
 each benchmark dataset from the repository (see below) and
 store the obtained partitions in the current working directory.
 
-Copyright (C) 2020-2025, Marek Gagolewski, https://www.gagolewski.com
+Copyright (C) 2020-2026, Marek Gagolewski, https://www.gagolewski.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,6 @@ import time
 from benchmark_load import *
 
 
-
-
-
 # ``````````````````````````````````````````````````````````````````````````````
 # `````` USER SETTINGS                                                   ```````
 # ``````````````````````````````````````````````````````````````````````````````
@@ -56,7 +53,6 @@ from benchmark_load import *
 # TODO: download the clustering benchmarks repository from
 # https://github.com/gagolews/clustering_benchmarks_v1
 benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
-
 
 # TODO: select one or more processing methods  (must be a list)
 preprocessors = ["original", "scale_standard", "scale_robust"][:1]
@@ -74,11 +70,8 @@ batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
 method = [
     "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
     "GIc",     # GIc - default parameters
-    "Test_GenieM",
-    "Test_Lumbermark",
-    #"Test_GIc", # GIc - many parameters (for testing)
-    #"Test_Genie_ForcedMerge", # Genie - experimental forced merge (for testing)
-    #"GenieApprox",
+    "GenieM",  # Genie on mutual reachability minimum spanning trees
+    "Lumbermark",
     "IcA",     # IcA (via GIc)
     "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
     "fastcluster_median",
@@ -93,7 +86,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][3]
+][2]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -111,24 +104,15 @@ method = [
 if method == "Genie":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_genie
-# elif method == "GenieApprox":
-#     import do_benchmark_genieclust_test
-#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_genieapprox
-# elif method == "Test_Genie_ForcedMerge":
-#     import do_benchmark_genieclust_test
-#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_genie_forced_merge
 elif method == "GIc":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_gic
-# elif method == "Test_GIc":
-#     import do_benchmark_genieclust_test
-#     do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_gic
-elif method == "Test_GenieM": # TODO
-    import do_benchmark_genieclust_test
-    do_benchmark = do_benchmark_genieclust_test.do_benchmark_test_geniem
-elif method == "Test_Lumbermark":  # TODO
-    import do_benchmark_lumbermark_test  # TODO
-    do_benchmark = do_benchmark_lumbermark_test.do_benchmark_test_lumbermark_tmp  # TODO
+elif method == "GenieM":
+    import do_benchmark_genieclust
+    do_benchmark = do_benchmark_genieclust.do_benchmark_geniem
+elif method == "Lumbermark":
+    import do_benchmark_lumbermark
+    do_benchmark = do_benchmark_lumbermark.do_benchmark_lumbermark
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica

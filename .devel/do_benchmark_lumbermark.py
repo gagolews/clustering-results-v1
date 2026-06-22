@@ -36,7 +36,8 @@ def do_benchmark_lumbermark(X, Ks):
     param_grid = sklearn.model_selection.ParameterGrid(dict(
         M=[0, 1, 3, 5, 7, 10, 15, 25][::-1],
         min_cluster_factor=[0.05, 0.1, 0.15, 0.2, 0.25, 0.33, 0.5],
-        # skip_leaves=[True, False],  # included in M
+        skip_leaves=[True, False],  # included in M
+        nested=[False, True],
         # min_cluster_size=[10],  # not significant
     ))
     print(" >:", end="", flush=True)
@@ -45,9 +46,11 @@ def do_benchmark_lumbermark(X, Ks):
         for param in param_grid:
             print(".", end="", flush=True)
 
-            name = "f%g_M%d"%(
+            name = "f%g_M%d_n%d_sl%d"%(
                 param["min_cluster_factor"],
-                param["M"]
+                param["M"],
+                int(param["nested"]),
+                int(param["skip_leaves"]),
             )
 
             try:
@@ -56,6 +59,8 @@ def do_benchmark_lumbermark(X, Ks):
                         n_clusters=K,
                         M=param["M"],
                         min_cluster_factor=param["min_cluster_factor"],
+                        nested=param["nested"],
+                        skip_leaves=param["skip_leaves"],
                         min_cluster_size=min_cluster_size,
                         quitefastmst_params=dict(algorithm="brute"),
                     ).fit_predict(X)

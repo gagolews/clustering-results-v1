@@ -55,25 +55,25 @@ from benchmark_load import *
 benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
 
 # TODO: select one or more processing methods  (must be a list)
-preprocessors = ["original", "scale_standard", "scale_robust"][:1]
+preprocessors = ["original", "scale_standard", "scale_robust"][:2]
 
 # TODO: if your algorithm is too slow for processing of large datasets,
 # well, set the following to True (will skip datasets with > 10000 rows)
 small_only = True
 
 # TODO: select one or more test batteries (must be a list)
-batteries = ["graves", "wut", "other", "fcps", "sipu", "uci",
-             "mnist", "h2mg", "g2mg"][:6]
+batteries = ["graves", "wut", "other", "fcps", "sipu", "uci", "todo_cdc", "todo_mnist",
+             "mnist", "h2mg", "g2mg"][:8]
 
 
 # TODO: register a new METHOD here, then select it
 method = [
-    "Genie",   # Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
-    "GIc",     # GIc - default parameters
-    "GenieM",  # Genie on mutual reachability minimum spanning trees
-    "Lumbermark",
-    "IcA",     # IcA (via GIc)
-    "ITM",     # Andreas Mueller's Information Theoretic Clustering with MSTs
+    "Genie",      # 0 Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
+    "GIc",        # 1 GIc - default parameters
+    "GenieM",     # 2 Genie on mutual reachability minimum spanning trees
+    "Lumbermark", # 3 Lumbermark
+    "IcA",        # 4 IcA (via GIc)
+    "ITM",        # 5 Andreas Mueller's Information Theoretic Clustering with MSTs
     "fastcluster_median",
     "fastcluster_centroid",
     "fastcluster_ward",
@@ -86,7 +86,7 @@ method = [
     "sklearn_spectral",
     "r_fcps_nonproj",
     "r_hdbscan"
-][3]
+][14]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -268,7 +268,7 @@ def benchmark(battery, dataset, benchmarks_path,
     X = load_data(input_fname_base+".data.gz", preprocess)
 
 
-    if small_only and (X.shape[0] >= 10_000):
+    if small_only and (X.shape[0] > 10_000):
         return
 
 

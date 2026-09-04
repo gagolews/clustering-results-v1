@@ -41,6 +41,11 @@ def do_benchmark_lumbermark(X, Ks):
         # min_cluster_size=[10],  # not significant
     ))
     print(" >:", end="", flush=True)
+
+    l = lumbermark.Lumbermark(
+        quitefastmst_params=dict(algorithm="brute")
+    )
+
     for K in Ks:
         print(" ", end="", flush=True)
         for param in param_grid:
@@ -53,17 +58,16 @@ def do_benchmark_lumbermark(X, Ks):
                 int(param["skip_leaves"]),
             )
 
+            l.set_params(M=param["M"])
+            l.set_params(n_clusters=K)
+            l.set_params(min_cluster_factor=param["min_cluster_factor"])
+            l.set_params(nested=param["nested"])
+            l.set_params(skip_leaves=param["skip_leaves"])
+
             try:
                 for min_cluster_size in [10, 5]:
-                    y_pred = lumbermark.Lumbermark(
-                        n_clusters=K,
-                        M=param["M"],
-                        min_cluster_factor=param["min_cluster_factor"],
-                        nested=param["nested"],
-                        skip_leaves=param["skip_leaves"],
-                        min_cluster_size=min_cluster_size,
-                        quitefastmst_params=dict(algorithm="brute"),
-                    ).fit_predict(X)
+                    l.set_params(min_cluster_size=min_cluster_size)
+                    y_pred = l.fit_predict(X)
 
                     if max(y_pred) == K-1: break
 

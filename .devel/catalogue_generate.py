@@ -2,7 +2,7 @@
 
 """Generates the Catalogue of Clustering Results
 
-Copyleft (C) 2018-2023, Marek Gagolewski <https://www.gagolewski.com>
+Copyleft (C) 2018-2026, Marek Gagolewski <https://www.gagolewski.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,17 +47,18 @@ ignore_methods_regex = r".*DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*" + \
     "|.*WCNN.*|^Test_.*|^mst_.*"
 
 include_methods = [
-    "sklearn_birch_T0.01_BF50",
-    "sklearn_spectral_Alaplacian_G5",
-    "DuNN_25_Min_Max",
-    "DuNN_25_Mean_Mean",
-    "DuNN_25_Max_Min",
-    "WCNN_25",
-    "mst_divisive_BallHall","mst_divisive_CalinskiHarabasz","mst_divisive_DaviesBouldin","mst_divisive_Silhouette","mst_divisive_SilhouetteW","mst_divisive_GDunn_d1_D1","mst_divisive_GDunn_d1_D2","mst_divisive_GDunn_d1_D3","mst_divisive_GDunn_d2_D1","mst_divisive_GDunn_d2_D2","mst_divisive_GDunn_d2_D3","mst_divisive_GDunn_d3_D1","mst_divisive_GDunn_d3_D2","mst_divisive_GDunn_d3_D3","mst_divisive_GDunn_d4_D1","mst_divisive_GDunn_d4_D2","mst_divisive_GDunn_d4_D3","mst_divisive_GDunn_d5_D1","mst_divisive_GDunn_d5_D2","mst_divisive_GDunn_d5_D3",
-    "mst_divisive_DuNN_25_Min_Max",
-    "mst_divisive_DuNN_25_Mean_Mean",
-    "mst_divisive_DuNN_25_Max_Min",
-    "mst_divisive_WCNN_25",
+    "Lumbermark_f0.25_M5_n0_sl1",
+    # "sklearn_birch_T0.01_BF50",
+    # "sklearn_spectral_Alaplacian_G5",
+    # "DuNN_25_Min_Max",
+    # "DuNN_25_Mean_Mean",
+    # "DuNN_25_Max_Min",
+    # "WCNN_25",
+    # "mst_divisive_BallHall","mst_divisive_CalinskiHarabasz","mst_divisive_DaviesBouldin","mst_divisive_Silhouette","mst_divisive_SilhouetteW","mst_divisive_GDunn_d1_D1","mst_divisive_GDunn_d1_D2","mst_divisive_GDunn_d1_D3","mst_divisive_GDunn_d2_D1","mst_divisive_GDunn_d2_D2","mst_divisive_GDunn_d2_D3","mst_divisive_GDunn_d3_D1","mst_divisive_GDunn_d3_D2","mst_divisive_GDunn_d3_D3","mst_divisive_GDunn_d4_D1","mst_divisive_GDunn_d4_D2","mst_divisive_GDunn_d4_D3","mst_divisive_GDunn_d5_D1","mst_divisive_GDunn_d5_D2","mst_divisive_GDunn_d5_D3",
+    # "mst_divisive_DuNN_25_Min_Max",
+    # "mst_divisive_DuNN_25_Mean_Mean",
+    # "mst_divisive_DuNN_25_Max_Min",
+    # "mst_divisive_WCNN_25",
 ]
 
 plt.style.use("seaborn-v0_8-whitegrid")  # overall plot style
@@ -215,7 +216,7 @@ if __name__ == "__main__":
     print("The **[Framework for Benchmarking Clustering Algorithms](https://clustering-benchmarks.gagolewski.com)", file=f)
     print("is authored/edited/maintained by [Marek Gagolewski](https://www.gagolewski.com)**\n", file=f)
 
-    with np.DataSource().open(os.path.join(data_path, "VERSION")) as vf:
+    with np.lib.npyio.DataSource().open(os.path.join(data_path, "VERSION")) as vf:
         version = vf.read()
 
     print("\n[Benchmark suite](https://github.com/gagolews/clustering-data-v1) version %s\n" % version, file=f)

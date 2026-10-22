@@ -5,8 +5,9 @@ This repository is part of the
 [**Framework for Benchmarking Clustering Algorithms**](https://clustering-benchmarks.gagolewski.com).
 
 It hosts the outputs of various clustering algorithms for the datasets included
-in the *Benchmark Suite for Clustering Algorithms: Version 1.1.0*;
-see <https://github.com/gagolews/clustering-data-v1/>.
+in the *Benchmark Suite for Clustering Algorithms: Version 1.2.0*;
+see <https://github.com/gagolews/clustering-data-v1/>,
+DOI:[10.5281/zenodo.23563578](https://doi.org/10.5281/zenodo.23563578).
 
 **Author/Editor/Maintainer**:
 [Marek Gagolewski](https://www.gagolewski.com).

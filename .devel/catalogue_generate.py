@@ -28,6 +28,7 @@ import glob
 import re
 import sys
 import genieclust
+import deadwood
 from natsort import natsorted
 import shutil
 import clustbench
@@ -47,7 +48,12 @@ ignore_methods_regex = r".*DuNN_.*|^sklearn_birch.*|^sklearn_spectral.*" + \
     "|.*WCNN.*|^Test_.*|^mst_.*"
 
 include_methods = [
-    "Lumbermark_f0.25_M5_n0_sl1",
+    "Lumbermark_f0.25_M5",
+    "Genie_G0.3",
+    "sklearn_kmeans",
+    "ITM",
+    "fastcluster_average",
+    "sklearn_gm",
     # "sklearn_birch_T0.01_BF50",
     # "sklearn_spectral_Alaplacian_G5",
     # "DuNN_25_Min_Max",
@@ -124,7 +130,7 @@ def process(f, battery, dataset):
     scores = pd.Series(scores).sort_values(ascending=False)
 
     for method in scores.index:
-        if (re.search(ignore_methods_regex, method) is not None) and (method not in include_methods):
+        if (re.search(ignore_methods_regex, method) is not None) or (method not in include_methods):
             continue
 
         print('#### %s (NCA=%.2f)\n' % (method, scores[method]), file=f)
@@ -149,20 +155,20 @@ def process(f, battery, dataset):
 
 
             if X.shape[1] == 2:
-                genieclust.plots.plot_scatter(X, labels=results[method][k]-1, alpha=0.5)
+                deadwood.plots.plot_scatter(X, labels=results[method][k]-1, alpha=0.5)
                 plt.axis("equal")
 
             elif X.shape[1] == 1:
                 X_aug = np.insert(X, 1, np.random.randn(len(X))*(X.max()-X.min())*1e-6, axis=1)
-                genieclust.plots.plot_scatter(X_aug, labels=results[method][k]-1, alpha=0.5)
+                deadwood.plots.plot_scatter(X_aug, labels=results[method][k]-1, alpha=0.5)
                 plt.axis("equal")
 
             elif X.shape[1] == 3:
                 ax.scatter(
                     X[:, 0],
                     X[:, 1],
-                    c=np.array(genieclust.plots.col, dtype=object)[
-                        (results[method][k]-1) % len(genieclust.plots.col)
+                    c=np.array(deadwood.plots.colors, dtype=object)[
+                        (results[method][k]-1) % len(deadwood.plots.colors)
                     ],
                     alpha=0.5
                 )

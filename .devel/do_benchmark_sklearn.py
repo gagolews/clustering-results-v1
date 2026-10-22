@@ -30,8 +30,10 @@ import numpy as np
 import warnings
 
 def do_benchmark_birch(X, Ks):
-    max_K = max(max(Ks), 16) # just in case we'll need more in the future
-    Ks = list(range(2, max_K+1))
+    # this is slow -- use only Ks provided
+    #max_K = max(max(Ks), 16) # just in case we'll need more in the future
+    #Ks = list(range(2, max_K+1))
+    Ks = np.unique(Ks).tolist()
     res = dict()
     for K in Ks: res[K] = dict()
 
@@ -83,14 +85,15 @@ def do_benchmark_spectral(X, Ks):
     # this is slow -- use only Ks provided
     #max_K = max(max(Ks), 16) # just in case we'll need more in the future
     #Ks = list(range(2, max_K+1))
-
+    Ks = np.unique(Ks).tolist()
     res = dict()
     for K in Ks: res[K] = dict()
 
     print(" >:", end="", flush=True)
     for K in Ks:
-        for affinity in ["rbf", "laplacian", "poly", "sigmoid"]:
-            for gamma in [0.25, 0.5, 1.0, 2.5, 5.0]:
+        for affinity, gamma in zip(['rbf', 'laplacian'], [1.0, 5.0]):
+        #for affinity in ["rbf", "laplacian", "poly", "sigmoid"]:
+        #    for gamma in [0.25, 0.5, 1.0, 2.5, 5.0]:
                 method = "sklearn_spectral_A%s_G%g"%(affinity, gamma)
                 try:
                     with warnings.catch_warnings():
@@ -116,8 +119,11 @@ def do_benchmark_spectral(X, Ks):
 
 
 def do_benchmark_gm(X, Ks):
-    max_K = max(max(Ks), 16) # just in case we'll need more in the future
-    Ks = list(range(2, max_K+1))
+    # this is slow -- use only Ks provided
+    #max_K = max(max(Ks), 16) # just in case we'll need more in the future
+    #Ks = list(range(2, max_K+1))
+
+    Ks = np.unique(Ks).tolist()
     res = dict()
     for K in Ks: res[K] = dict()
 
@@ -129,7 +135,7 @@ def do_benchmark_gm(X, Ks):
             # defaults: tol=1e-3, covariance_type="full", max_iter=100, reg_covar=1e-6
             random_state=123
         )
-        labels_pred = c.fit_predict(X)+1 # 0-based -> 1-based
+        labels_pred = c.fit_predict(X.astype(float))+1 # 0-based -> 1-based
         if len(np.unique(labels_pred)) != K: # some clusters might be empty
             continue # skip
         res[K][method] = labels_pred

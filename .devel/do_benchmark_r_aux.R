@@ -64,9 +64,9 @@ fcps_cases <- list(
     FCPS_AdaptiveDensityPeak=list(ADPclustering), # default params
     FCPS_Minimax=list(HierarchicalClustering, "Minimax"),  # protoclust::protoclust Minimax Linkage; no params
     FCPS_MinEnergy=list(HierarchicalClustering, "MinEnergy"),  # energy::energy.hclust Hierarchical Clustering by Minimum (Energy) E-distance; MinimalEnergyClustering no params
-    FCPS_HDBSCAN_4=list(HierarchicalClustering, "HDBSCAN"), # dbscan::hdbscan HierarchicalDBSCAN minPts=4
-    FCPS_HDBSCAN_2=list(HierarchicalClustering, "HDBSCAN", minPts=2),
-    FCPS_HDBSCAN_8=list(HierarchicalClustering, "HDBSCAN", minPts=8),
+    #FCPS_HDBSCAN_4=list(HierarchicalClustering, "HDBSCAN"), # dbscan::hdbscan HierarchicalDBSCAN minPts=4
+    #FCPS_HDBSCAN_2=list(HierarchicalClustering, "HDBSCAN", minPts=2),
+    #FCPS_HDBSCAN_8=list(HierarchicalClustering, "HDBSCAN", minPts=8),
     FCPS_Diana=list(DivisiveAnalysisClustering), # cluster::diana DIvisive ANAlysis Clustering
     FCPS_Fanny=list(FannyClustering, maxit=2000), # cluster::fanny Fuzzy Analysis Clustering
     FCPS_Hardcl=list(HCLclustering), # cclust::cclust(method="hardcl") On-line Update (Hard Competitive learning convex clustering) method

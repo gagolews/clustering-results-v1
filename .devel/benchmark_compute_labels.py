@@ -55,21 +55,20 @@ from benchmark_load import *
 benchmarks_path = "/home/gagolews/Projects/clustering-data-v1"
 
 # TODO: select one or more processing methods  (must be a list)
-preprocessors = ["original", "scale_standard", "scale_robust"][:2]
+preprocessors = ["original", "scale_standard", "scale_robust"][:1]
 
 # TODO: if your algorithm is too slow for processing of large datasets,
 # well, set the following to True (will skip datasets with > 10000 rows)
 small_only = True
 
 # TODO: select one or more test batteries (must be a list)
-batteries = ["graves", "wut", "other", "fcps", "sipu", "uci", "todo_cdc", "todo_mnist",
-             "mnist", "h2mg", "g2mg"][:8]
+batteries = ["cdc", "graves", "wut", "other", "fcps", "sipu", "uci", "mnist", "h2mg", "g2mg"][:8]
 
 
 # TODO: register a new METHOD here, then select it
 method = [
     "Genie",      # 0 Genie - thresholds 0.1, 0.3, 0.5, 0.7, 1.0(=single linkage)
-    "GIc",        # 1 GIc - default parameters
+    "GenieIc",    # 1 GIc - default parameters
     "GenieM",     # 2 Genie on mutual reachability minimum spanning trees
     "Lumbermark", # 3 Lumbermark
     "IcA",        # 4 IcA (via GIc)
@@ -80,12 +79,19 @@ method = [
     "fastcluster_complete", # O(N^2) memory
     "fastcluster_average",  # O(N^2) memory
     "fastcluster_weighted", # O(N^2) memory
-    "sklearn_kmeans",
-    "sklearn_birch",
-    "sklearn_gm",
-    "sklearn_spectral",
-    "r_fcps_nonproj",
-    "r_hdbscan"
+    "sklearn_kmeans",   # 12
+    "sklearn_birch",    # 13
+    "sklearn_gm",       # 14
+    "sklearn_spectral", # 15
+    "fcps_nonproj",     # 16
+    "r_hdbscan",        # 17
+    "CTCEHC",           # 18
+    "HEMST",            # 19
+    "TestLumbermark",   # 20
+    "FastLDPMST",       # 21
+    "SNNDPC",           # 22
+    "SeqMST",           # 23
+    "LDPMST",           # 24
 ][14]
 
 
@@ -104,7 +110,13 @@ method = [
 if method == "Genie":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_genie
-elif method == "GIc":
+elif method == "HEMST":
+    import do_benchmark_lukasz
+    do_benchmark = do_benchmark_lukasz.do_benchmark_hemst
+elif method == "CTCEHC":
+    import do_benchmark_lukasz
+    do_benchmark = do_benchmark_lukasz.do_benchmark_ctcehc
+elif method == "GenieIc":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_gic
 elif method == "GenieM":
@@ -113,6 +125,9 @@ elif method == "GenieM":
 elif method == "Lumbermark":
     import do_benchmark_lumbermark
     do_benchmark = do_benchmark_lumbermark.do_benchmark_lumbermark
+elif method == "TestLumbermark":
+    import do_benchmark_lumbermark
+    do_benchmark = do_benchmark_lumbermark.do_benchmark_test_lumbermark
 elif method == "IcA":
     import do_benchmark_genieclust
     do_benchmark = do_benchmark_genieclust.do_benchmark_ica
@@ -149,12 +164,24 @@ elif method == "fastcluster_ward":
 elif method == "fastcluster_centroid":
     import do_benchmark_fastcluster
     do_benchmark = do_benchmark_fastcluster.do_benchmark_centroid
-elif method == "r_fcps_nonproj":
+elif method == "fcps_nonproj":
     import do_benchmark_r
     do_benchmark = do_benchmark_r.do_benchmark_fcps_nonproj
 elif method == "r_hdbscan":
     import do_benchmark_r
     do_benchmark = do_benchmark_r.do_benchmark_hdbscan
+elif method == "FastLDPMST":
+    import do_benchmark_fastldpmst
+    do_benchmark = do_benchmark_fastldpmst.do_benchmark_fastldpmst
+elif method == "SNNDPC":
+    import do_benchmark_snndpc
+    do_benchmark = do_benchmark_snndpc.do_benchmark_snndpc
+elif method == "SeqMST":
+    import do_benchmark_layeb
+    do_benchmark = do_benchmark_layeb.do_benchmark_seqmst
+elif method == "LDPMST":
+    import do_benchmark_layeb
+    do_benchmark = do_benchmark_layeb.do_benchmark_ldpmst
 else:
     raise Exception("unknown `method`")
 
@@ -314,12 +341,12 @@ def benchmark(battery, dataset, benchmarks_path,
         for m,l in res[K].items():
             assert len(l) == X.shape[0]
             if K > 0:
-                assert min(l) == 1
-                assert max(l) == K
-                assert len(np.unique(l)) == K
+                if not min(l) == 1: raise ValueError("not min(l) == 1")
+                if not max(l) == K: raise ValueError("not max(l) == K")
+                if not len(np.unique(l)) == K: raise ValueError("not len(np.unique(l)) == K")
             else:
-                assert min(l) >= 0
-                assert max(l) <= 1
+                if not min(l) >= 0: raise ValueError("not min(l) >= 0")
+                if not max(l) <= 1: raise ValueError("not max(l) <= 1")
 
         # this is a slow part, hold tight:
         output_fname = output_fname_base+(".result%d.gz"%K)

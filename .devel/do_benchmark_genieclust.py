@@ -98,7 +98,7 @@ def do_benchmark_gic(X, Ks):
 
     # do not use compute_all_cuts! - see note on add_clusters in the manual
     gic = genieclust.GIc(
-        compute_full_tree=False
+        #compute_full_tree=False
     )
 
     print(" >:", end="", flush=True)
@@ -123,14 +123,17 @@ def do_benchmark_ica(X, Ks):
     for K in Ks: res[K] = dict()
 
     ica = genieclust.GIc(
-        n_clusters=max_K,
+        #n_clusters=max_K,
         gini_thresholds=[] # this is IcA -- start from n singletons
     )
 
     print(" >:", end="", flush=True)
-    method = "IcA"
-    labels_pred_matrix = ica.fit_predict(X)+1  # 0-based -> 1-based!!!
     for K in Ks:
-        res[K][method] = labels_pred_matrix[K]
+        method = "IcA"
+        ica.set_params(n_clusters=K)
+        labels_pred = ica.fit_predict(X)+1  # 0-based -> 1-based!!!
+        if ica.n_clusters_ == K:
+            # due to noise points, some K-partitions might be unavailable
+            res[K][method] = labels_pred
     print(":<", end="", flush=True)
     return res

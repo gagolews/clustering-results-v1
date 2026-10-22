@@ -6,7 +6,8 @@ This repository is part of the
 
 This directory hosts the outputs of various clustering algorithms
 for the datasets included in the *Benchmark Suite for Clustering Algorithms:
-Version 1.1.0*, 2022, <https://github.com/gagolews/clustering-data-v1/>.
+Version 1.2.0*, 2026, <https://github.com/gagolews/clustering-data-v1/>,
+DOI:[10.5281/zenodo.23563578](https://doi.org/10.5281/zenodo.23563578).
 
 The algorithms operated on the *original* data spaces,
 i.e., where only some minor preprocessing was applied:

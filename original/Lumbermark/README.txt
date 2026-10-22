@@ -1,7 +1,9 @@
-The Lumbermark clustering algorithm
-with respect to mutual reachability minimum spanning trees
+Lumbermark by Marek Gagolewski
+https://lumbermark.gagolewski.com/
 
-[`lumbermark`](https://lumbermark.gagolewski.com/) 0.9.0 for Python
+lumbermark for Python v0.9.1
 
-M. Gagolewski, *Lumbermark: Resistant Clustering by Chopping Up
-Mutual Reachability Minimum Spanning Trees*, 2026, submitted.
+
+M. Gagolewski, *Lumbermark: Resistant clustering by chopping up mutual
+reachability minimum spanning trees*, 2026,
+DOI:[10.48550/arXiv.2604.07143](https://doi.org/10.48550/arXiv.2604.07143)

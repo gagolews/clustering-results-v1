@@ -1,6 +1,6 @@
 This directory gives the outputs of HEMST (Grygorash, Zhou, Jorgensen, 2006)
 implemented by Łukasz Brzozowski; see
-<https://github.com/lukaszbrzozowski/msts>, commit ea9c6bf.
+<https://github.com/lukaszbrzozowski/msts>, commit 8536b11.
 
 
 References

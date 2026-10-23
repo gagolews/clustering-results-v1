@@ -92,7 +92,7 @@ method = [
     "SNNDPC",           # 22
     "SeqMST",           # 23
     "LDPMST",           # 24
-][14]
+][18]
 
 
 # hdbscan.HDBSCAN -- doesn't allow for setting the desired number of clusters
@@ -342,7 +342,8 @@ def benchmark(battery, dataset, benchmarks_path,
             assert len(l) == X.shape[0]
             if K > 0:
                 if not min(l) == 1: raise ValueError("not min(l) == 1")
-                if not max(l) == K: raise ValueError("not max(l) == K")
+                if max(l) < K: raise ValueError("max(l) < K")
+                if max(l) > K: raise ValueError("max(l) > K")
                 if not len(np.unique(l)) == K: raise ValueError("not len(np.unique(l)) == K")
             else:
                 if not min(l) >= 0: raise ValueError("not min(l) >= 0")

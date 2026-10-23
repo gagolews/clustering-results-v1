@@ -1,6 +1,6 @@
 This directory gives the outputs of CTCEHC (Ma et al., 2021)
 implemented by Łukasz Brzozowski; see
-<https://github.com/lukaszbrzozowski/msts>, commit ea9c6bf.
+<https://github.com/lukaszbrzozowski/msts>, commit 8536b11.
 
 
 References
